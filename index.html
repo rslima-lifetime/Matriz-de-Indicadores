@@ -144,10 +144,11 @@
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Tipo</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Nome do Indicador</th>
-                            <!-- NOVA COLUNA DE ÁREA -->
+                            <!-- COLUNA DE ÁREA -->
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px] sticky top-0 z-10 bg-gray-50 border-b">Área Responsável</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[200px] sticky top-0 z-10 bg-gray-50 border-b">Fórmula</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px] sticky top-0 z-10 bg-gray-50 border-b">Descrição Resumida</th>
+                            <!-- COLUNA RENOMEADA: DETALHES -->
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px] sticky top-0 z-10 bg-gray-50 border-b">DETALHES</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Fonte / Resp.</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Periodicidade</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[300px] sticky top-0 z-10 bg-gray-50 border-b">Motivo (Dor) & Objetivo</th>
@@ -206,7 +207,7 @@
                             <option value="Anual">Anual</option>
                         </select>
                     </div>
-                    <!-- NOVO CAMPO: ÁREA -->
+                    <!-- CAMPO ÁREA -->
                     <div class="col-span-1 md:col-span-2">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="area">Área Responsável</label>
                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="area" type="text" placeholder="Ex: Atração de Talentos / R&S" required>
@@ -220,8 +221,9 @@
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="formula">Fórmula</label>
                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 font-mono text-sm leading-tight focus:outline-none focus:shadow-outline" id="formula" type="text" placeholder="Ex: (Saídas / Ativos) * 100">
                     </div>
+                    <!-- CAMPO RENOMEADO: DETALHES -->
                     <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="detalhamento">Descrição Resumida</label>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="detalhamento">DETALHES</label>
                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="detalhamento" type="text" placeholder="O que este indicador mede, em termos simples.">
                     </div>
                     <div class="col-span-1">
@@ -409,7 +411,7 @@
                     ${item.nome}
                     ${item.nome_en ? `<br><span class="text-xs text-gray-500">(${item.nome_en})</span>` : ''}
                 </td>
-                <!-- NOVO CAMPO ÁREA RESPONSÁVEL -->
+                <!-- CAMPO ÁREA RESPONSÁVEL -->
                 <td class="px-6 py-4 text-gray-700 font-medium">${item.area}</td>
                 <td class="px-6 py-4 text-gray-600 font-mono text-xs bg-gray-50 rounded mx-2 border border-gray-100">${item.formula}</td>
                 <td class="px-6 py-4 text-gray-600">${item.detalhe}</td>
@@ -548,7 +550,7 @@
             document.getElementById('dor').value = item.dor;
             document.getElementById('objetivo').value = item.obj;
             document.getElementById('obs').value = item.obs;
-            document.getElementById('area').value = item.area || 'Atração de Talentos (R&S)'; // Preenche o novo campo de área
+            document.getElementById('area').value = item.area || 'Atração de Talentos (R&S)'; // Preenche o campo de área
 
             document.getElementById('modal-title').innerText = "Editar Indicador";
             document.getElementById('btnSave').innerText = "Atualizar";
@@ -657,7 +659,7 @@
             let csv = [];
             const BOM = "\uFEFF"; 
 
-            const headers = ["Tipo", "Nome do Indicador", "Área", "Fórmula", "Descrição Resumida", "Fonte", "Responsável Fonte", "Periodicidade", "Motivo & Objetivo", "Observação"];
+            const headers = ["Tipo", "Nome do Indicador", "Área", "Fórmula", "DETALHES", "Fonte", "Responsável Fonte", "Periodicidade", "Motivo & Objetivo", "Observação"];
             csv.push(headers.map(h => `"${h}"`).join(";")); 
 
             // Dados
@@ -666,9 +668,9 @@
                 // Mapeia os campos na ordem das colunas visíveis + Área
                 rowData.push(item.tipo);
                 rowData.push(`${item.nome} ${item.nome_en ? '(' + item.nome_en + ')' : ''}`);
-                rowData.push(item.area); // NOVO CAMPO ÁREA
+                rowData.push(item.area); // CAMPO ÁREA
                 rowData.push(item.formula);
-                rowData.push(item.detalhe); 
+                rowData.push(item.detalhe); // CAMPO DETALHES
                 rowData.push(item.fonte);
                 rowData.push(item.resp_fonte);
                 rowData.push(item.period);
