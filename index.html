@@ -61,8 +61,7 @@
         <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">Matriz de Indicadores</h1>
-                <!-- SUBTÍTULO ATUALIZADO (Genérico) -->
-                <p class="text-indigo-200 text-sm mt-1">Iniciativa People Analytics - Matriz de Documentação de Indicadores</p>
+                <p class="text-indigo-200 text-sm mt-1">Talent Acquisition & Assessment de Liderança</p>
             </div>
             <div class="mt-4 md:mt-0 flex gap-3 items-center">
                 
@@ -144,11 +143,8 @@
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Tipo</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Nome do Indicador</th>
-                            <!-- COLUNA DE ÁREA -->
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px] sticky top-0 z-10 bg-gray-50 border-b">Área Responsável</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[200px] sticky top-0 z-10 bg-gray-50 border-b">Fórmula</th>
-                            <!-- COLUNA RENOMEADA: DETALHES -->
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px] sticky top-0 z-10 bg-gray-50 border-b">DETALHES</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px] sticky top-0 z-10 bg-gray-50 border-b">Detalhamento</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Fonte / Resp.</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Periodicidade</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[300px] sticky top-0 z-10 bg-gray-50 border-b">Motivo (Dor) & Objetivo</th>
@@ -207,12 +203,6 @@
                             <option value="Anual">Anual</option>
                         </select>
                     </div>
-                    <!-- CAMPO ÁREA -->
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="area">Área Responsável</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="area" type="text" placeholder="Ex: Atração de Talentos / R&S" required>
-                    </div>
-                    
                     <div class="col-span-1 md:col-span-2">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="nome">Nome do Indicador</label>
                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="nome" type="text" placeholder="Ex: Turnover Precoce" required>
@@ -221,10 +211,9 @@
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="formula">Fórmula</label>
                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 font-mono text-sm leading-tight focus:outline-none focus:shadow-outline" id="formula" type="text" placeholder="Ex: (Saídas / Ativos) * 100">
                     </div>
-                    <!-- CAMPO RENOMEADO: DETALHES -->
                     <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="detalhamento">DETALHES</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="detalhamento" type="text" placeholder="O que este indicador mede, em termos simples.">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="detalhamento">Detalhamento (Dimensões)</label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="detalhamento" type="text" placeholder="Ex: Área, Gestor, Cidade, Cargo">
                     </div>
                     <div class="col-span-1">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="fonte">Fonte de Dados</label>
@@ -244,7 +233,7 @@
                     </div>
                      <div class="col-span-1 md:col-span-2">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="obs">Observação</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="obs" type="text" placeholder="Detalhes adicionais (e.g., Dimensões: Cargo, Unidade)">
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="obs" type="text" placeholder="Detalhes adicionais">
                     </div>
                 </form>
                 <div class="flex justify-end pt-4 border-t mt-4">
@@ -310,45 +299,78 @@
     </div>
 
     <script>
-        // --- DADOS GLOBAIS (Database Local) ---
-        let indicatorsData = [
-            { tipo: "KPI", nome: "Tempo de Fechamento", nome_en: "Time to Fill", formula: "Média(Data Fechamento - Data Abertura)", detalhe: "Mede a eficiência operacional do R&S, calculando o tempo médio que leva para preencher uma vaga desde a abertura.", obs: "Dimensões: Diretoria, Cargo, Recrutador.", period: "Mensal", dor: "Demora em repor posições críticas.", obj: "Otimizar velocidade sem perder qualidade.", area: "Atração de Talentos (R&S)" },
-            { tipo: "KPI", nome: "Retenção de Novos Contratados (12M)", nome_en: "New Hire Retention", formula: "(Contratados que permaneceram > 12M / Total de Contratados) * 100", detalhe: "Mede o percentual de pessoas que permanecem na empresa por um período superior a 12 meses após a contratação.", obs: "Dimensões: Gestor, Área, Fonte de Recrutamento.", period: "Trimestral", dor: "Custo e retrabalho por contratação não assertiva.", obj: "Validar a qualidade da seleção e do fit cultural de longo prazo.", area: "Atração de Talentos (R&S)" },
-            { tipo: "KPI", nome: "Taxa de Aceite de Proposta", nome_en: "Offer Acceptance Rate", formula: "(Ofertas Aceitas / Total Ofertas) * 100", detalhe: "Percentual de candidatos que aceitam a proposta de emprego formalizada pela empresa.", obs: "Dimensões: Cargo, Área, Faixa Salarial.", period: "Mensal", dor: "Perder talentos na etapa final.", obj: "Ajustar pacote de benefícios e competitividade salarial.", area: "Atração de Talentos (R&S)" },
-            { tipo: "KPI", nome: "Custo por Contratação", nome_en: "Cost per Hire", formula: "(Custos Internos + Custos Externos) / Nº Contratações", detalhe: "Indica o valor médio que a empresa gasta para preencher uma vaga.", obs: "Dimensões: Área, Nível Hierárquico. Incluir Headhunters e licenças.", period: "Trimestral", dor: "Orçamento estourado / ROI desconhecido.", obj: "Otimizar budget em fontes eficazes.", area: "Atração de Talentos (R&S)" },
-            { tipo: "Indicador", nome: "Turnover Precoce (90 dias)", nome_en: "Early Turnover", formula: "(Desligados < 90 dias / Contratados no período) * 100", detalhe: "Mede a taxa de desligamentos que ocorrem nos primeiros 90 dias de trabalho.", obs: "Dimensões: Gestor, Área, Fonte, BP. Monitorar janelas de 6 e 12 meses.", period: "Trimestral", dor: "Erro na contratação ou falha no onboarding.", obj: "Validar qualidade da seleção e fit cultural.", area: "Atração de Talentos (R&S)" },
-            { tipo: "Métrica", nome: "Eficiência do Funil", nome_en: "Pass-through Rate", formula: "(Candidatos na etapa X / Candidatos na etapa anterior) %", detalhe: "Mede a eficiência de conversão entre cada etapa do processo seletivo.", obs: "Dimensões: Etapa, Recrutador, Vaga. Verificar reprovação por gestor.", period: "Semanal", dor: "Triagem ineficiente ou gargalo em etapas.", obj: "Identificar gargalos no funil.", area: "Atração de Talentos (R&S)" },
-            { tipo: "Indicador", nome: "Satisfação do Gestor", nome_en: "HM Satisfaction", formula: "Média nota (1-5) ou NPS da pesquisa pós-vaga", detalhe: "Mede o nível de satisfação do gestor contratante com o processo de R&S e o perfil do candidato.", obs: "Dimensões: Gestor, Diretoria, Recrutador. Enviar 7 dias pós-fechamento.", period: "Mensal", dor: "Desalinhamento RH x Negócio.", obj: "Promover parceria consultiva e alinhamento.", area: "Atração de Talentos (R&S)" },
-            { tipo: "Indicador", nome: "Qualidade da Origem", nome_en: "Source Quality", formula: "(Contratados de Alta Performance / Total Contratados por Fonte)", detalhe: "Mede quais canais de recrutamento estão trazendo os candidatos que performam melhor a longo prazo.", obs: "Dimensões: Fonte (LinkedIn, Gupy, Indicação). Cruza com avaliação de 90 dias.", period: "Semestral", dor: "Gasto em fontes de baixa qualidade.", obj: "Otimizar investimento em fontes eficazes.", area: "Atração de Talentos (R&S)" },
-            { tipo: "Indicador", nome: "Aproveitamento Interno", nome_en: "Liderança", formula: "(Vagas de Liderança Fechadas Internamente / Total Vagas Liderança) * 100", detalhe: "Mede a eficácia dos programas de desenvolvimento e sucessão de líderes internos.", obs: "Dimensões: Diretoria, Nível. Se baixo, rever Trainee/Sucessão.", period: "Mensal", dor: "Pipeline de sucessão fraco.", obj: "Medir eficácia de DHO e mobilidade interna.", area: "Desenvolvimento Humano e Organizacional (DHO)" },
-            { tipo: "Métrica", nome: "Diversidade no Shortlist", nome_en: "", formula: "% de candidatos de grupos sub-representados na etapa final", detalhe: "Mede a representatividade de grupos minoritários na etapa final do funil de recrutamento.", obs: "Dimensões: Gênero, Raça, PcD. Foco na etapa final.", period: "Mensal", dor: "Contratações homogêneas.", obj: "Garantir representatividade na boca do funil.", area: "Diversidade & Inclusão (D&I)" },
-            { tipo: "Métrica", nome: "Vagas Abertas vs Fechadas", nome_en: "Volume", formula: "Contagem simples (Snapshot)", detalhe: "Contagem do volume de vagas em cada status (abertas, em andamento, fechadas).", obs: "Dimensões: Status, Recrutador. Usado para balanceamento de carga.", period: "Semanal", dor: "Backlog acumulado.", obj: "Balanceamento de carga do time de R&S.", area: "Atração de Talentos (R&S)" },
+        // Chave para armazenamento de sessão (trocado de localStorage para sessionStorage)
+        const STORAGE_KEY = 'matriz_indicadores_data';
+
+        // Dados padrão (mantido como referência, mas não usado para inicializar)
+        const DEFAULT_INDICATORS_DATA = [
+            { tipo: "KPI", nome: "Tempo de Fechamento", nome_en: "Time to Fill", formula: "Média(Data Fechamento - Data Abertura)", detalhe: "Diretoria, Cargo, Recrutador", fonte: "ATS (Gupy)", resp_fonte: "Admin ATS", period: "Mensal", dor: "Demora em repor posições críticas.", obj: "Otimizar velocidade sem perder qualidade.", obs: "Excluir vagas canceladas." },
+            { tipo: "KPI", nome: "Taxa de Aceite de Proposta", nome_en: "Offer Acceptance Rate", formula: "(Ofertas Aceitas / Total Ofertas) * 100", detalhe: "Cargo, Área, Faixa Salarial", fonte: "ATS / Planilha", resp_fonte: "Recrutadores", period: "Mensal", dor: "Problemas de competitividade salarial.", obj: "Ajustar pacote de benefícios.", obs: "Se baixo, cruzar com pesquisa salarial." },
+            { tipo: "KPI", nome: "Turnover Precoce", nome_en: "Early Turnover", formula: "(Desligados < 90 dias / Contratados) * 100", detalhe: "Gestor, Área, Fonte, BP", fonte: "HCM (ADP/Totvs)", resp_fonte: "DP / Folha", period: "Trimestral", dor: "Erro na contratação ou falha no onboarding.", obj: "Validar qualidade da seleção.", obs: "Monitorar janelas de 6 e 12 meses." },
+            { tipo: "KPI", nome: "Custo por Contratação", nome_en: "Cost per Hire", formula: "(Custos Internos + Ext) / Nº Contratações", detalhe: "Área, Nível Hierárquico", fonte: "ERP + ATS", resp_fonte: "Financeiro", period: "Trimestral", dor: "Orçamento estourado / ROI desconhecido.", obj: "Otimizar budget em fontes eficazes.", obs: "Incluir Headhunters e licenças." },
+            { tipo: "KPI", nome: "SLA de Triagem", nome_en: "", formula: "Média(Data Entrevista - Data Candidatura)", detalhe: "Recrutador, Nível da Vaga", fonte: "ATS", resp_fonte: "Admin ATS", period: "Semanal", dor: "Bons candidatos desistem se demorar.", obj: "Agilidade na experiência do candidato.", obs: "Crítico para vagas de tecnologia." },
+            { tipo: "Métrica", nome: "Eficiência do Funil", nome_en: "Pass-through Rate", formula: "(Candidatos Etapa X / Etapa Anterior) %", detalhe: "Etapa, Recrutador, Vaga", fonte: "ATS", resp_fonte: "Admin ATS", period: "Semanal", dor: "Triagem ineficiente ou gestor exigente.", obj: "Identificar gargalos no funil.", obs: "Verificar reprovação por gestor." },
+            { tipo: "Indicador", nome: "Satisfação do Gestor", nome_en: "HM Satisfaction", formula: "Média nota (1-5) ou NPS", detalhe: "Gestor, Diretoria, Recrutador", fonte: "Forms / ATS", resp_fonte: "Time P&A", period: "Mensal", dor: "Desalinhamento RH x Negócio.", obj: "Parceria consultiva.", obs: "Enviar 7 dias pós-fechamento." },
+            { tipo: "Indicador", nome: "Qualidade da Origem", nome_en: "Source Quality", formula: "(High Performers / Total por Fonte)", detalhe: "Fonte (LinkedIn, Gupy)", fonte: "ATS + Aval. Desemp.", resp_fonte: "P&A / DHO", period: "Semestral", dor: "Gasto em fontes de baixa qualidade.", obj: "Otimizar investimento.", obs: "Cruzar com avaliação de 90 dias." },
+            { tipo: "Indicador", nome: "Aproveitamento Interno", nome_en: "Liderança", formula: "(Vagas Internas / Total Liderança) %", detalhe: "Diretoria, Nível", fonte: "ATS / HCM", resp_fonte: "DHO / P&A", period: "Mensal", dor: "Pipeline de sucessão fraco.", obj: "Medir eficácia de DHO.", obs: "Rever Trainee/Sucessão." },
+            { tipo: "Métrica", nome: "Diversidade no Shortlist", nome_en: "", formula: "% grupos sub-representados etapa final", detalhe: "Gênero, Raça, PcD", fonte: "ATS", resp_fonte: "Admin ATS", period: "Mensal", dor: "Contratações homogêneas.", obj: "Representatividade na boca do funil.", obs: "Foco na etapa final." },
+            { tipo: "Indicador", nome: "Aderência Comportamental", nome_en: "Fit Cultural", formula: "% match perfil vaga vs candidato", detalhe: "Cargo, Área, BP", fonte: "Plat. Assessment", resp_fonte: "Consultoria", period: "Mensal", dor: "Falha no fit comportamental.", obj: "Assertividade cultural.", obs: "Crítico para Liderança." },
+            { tipo: "Métrica", nome: "Vagas Abertas vs Fechadas", nome_en: "Volume", formula: "Contagem simples", detalhe: "Status, Recrutador", fonte: "ATS", resp_fonte: "Admin ATS", period: "Semanal", dor: "Backlog acumulado.", obj: "Balanceamento de carga.", obs: "Justificativa para novas contratações." },
+            { tipo: "Métrica", nome: "Motivos de Declínio", nome_en: "", formula: "Contagem por categoria", detalhe: "Cargo, Concorrente", fonte: "ATS", resp_fonte: "Recrutadores", period: "Trimestral", dor: "Perda para concorrência.", obj: "Dados para Remuneração.", obs: "Campo estruturado." }
         ];
 
-        // Fontes de Dados e Responsáveis (Para preencher o form)
-        const SOURCE_DATA = {
-            'ATS (Gupy)': { resp: 'Admin ATS', icon: 'fas fa-database' },
-            'HCM (ADP/Totvs)': { resp: 'DP / Folha', icon: 'fas fa-users-cog' },
-            'ERP Financeiro': { resp: 'Financeiro', icon: 'fas fa-money-bill-wave' },
-            'Plataforma de Assessment': { resp: 'Consultoria Ext. / DHO', icon: 'fas fa-brain' },
-            'Forms / Pesquisa': { resp: 'Time P&A', icon: 'fas fa-poll' },
-            'Planilha de Controle': { resp: 'Recrutadores', icon: 'fas fa-file-excel' }
-        };
+        // Variável global que armazena os dados.
+        let indicatorsData = []; 
 
+        // --- LÓGICA DE PERSISTÊNCIA (sessionStorage) ---
+        function saveIndicators() {
+            try {
+                // Só salva se houver dados
+                if (indicatorsData.length > 0) {
+                    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(indicatorsData));
+                    console.log(`[SessionStorage] SUCESSO: Dados salvos. Total de itens: ${indicatorsData.length}.`);
+                } else {
+                    // Limpa o storage se a lista estiver vazia (opcional, mas bom para limpeza)
+                    sessionStorage.removeItem(STORAGE_KEY);
+                    console.log("[SessionStorage] INFO: Lista vazia. Chave removida do storage.");
+                }
+            } catch (error) {
+                console.error("[SessionStorage] ERRO ao salvar dados:", error);
+            }
+        }
+
+        function loadIndicators() {
+            try {
+                const storedData = sessionStorage.getItem(STORAGE_KEY);
+                if (storedData) {
+                    indicatorsData = JSON.parse(storedData);
+                    console.log(`[SessionStorage] SUCESSO: Dados carregados. Total de itens: ${indicatorsData.length}.`, indicatorsData);
+                } else {
+                    // Inicializa vazio se não houver dados salvos
+                    indicatorsData = [];
+                    console.log("[SessionStorage] INFO: Nenhuma dado encontrado. Inicializando matriz vazia.");
+                }
+            } catch (error) {
+                console.error("[SessionStorage] ERRO ao carregar dados, inicializando vazio:", error);
+                indicatorsData = [];
+            }
+        }
+        
+        // Definições estáticas (não precisam ser salvas)
         const definitions = {
             'KPI': {
                 title: 'Key Performance Indicator (KPI)',
                 headerColor: 'bg-green-600',
                 desc: 'É o "Termômetro do Sucesso". Indicadores-chave de desempenho que estão diretamente ligados aos objetivos estratégicos da empresa. Se o KPI vai mal, a estratégia da empresa está em risco.',
                 analogy: 'Em um carro, o KPI é o Velocímetro: diz se você está na velocidade certa para chegar ao destino a tempo.',
-                examples: ['Retenção de Novos Contratados (Qualidade de Contratação)', 'Time to Fill (Agilidade/Produtividade)', 'Custo por Contratação']
+                examples: ['Turnover Precoce (Custo/Qualidade)', 'Time to Fill (Agilidade/Produtividade)', 'NPS do Gestor (Qualidade do Serviço)']
             },
             'Indicador': {
                 title: 'Indicador Tático',
                 headerColor: 'bg-blue-600',
                 desc: 'É o "Painel de Controle". Medidas que monitoram a performance de processos específicos ou departamentos. Eles explicam o "porquê" um KPI está bom ou ruim.',
                 analogy: 'Em um carro, é o medidor de Óleo ou Temperatura: mostra a saúde de uma parte específica do motor que pode parar o carro se falhar.',
-                examples: ['Satisfação do Gestor', 'Qualidade da Origem (Source Quality)', 'Aproveitamento Interno']
+                examples: ['Satisfação do Gestor', 'Qualidade da Origem (Source Quality)', 'Taxa de Aproveitamento Interno']
             },
             'Métrica': {
                 title: 'Métrica Operacional',
@@ -361,10 +383,12 @@
 
         // --- INICIALIZAÇÃO ---
         document.addEventListener('DOMContentLoaded', () => {
-            renderTable();
+            loadIndicators(); // 1. Carrega os dados (vazio ou salvo)
+            renderTable();    // 2. Renderiza a tabela
         });
 
         // --- LÓGICA DE RENDERIZAÇÃO (CORE) ---
+        // Toda vez que os dados mudam, redesenhamos a tabela.
         function renderTable() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
@@ -396,10 +420,6 @@
             if (item.period === 'Semestral') pColor = "purple";
             if (item.period === 'Anual') pColor = "red";
 
-            // Tenta obter o ícone da fonte.
-            const sourceInfo = Object.entries(SOURCE_DATA).find(([key]) => (item.fonte || '').includes(key));
-            const sourceIcon = sourceInfo ? sourceInfo[1].icon : 'fas fa-database';
-
             tr.innerHTML = `
                 <td class="px-4 py-4 whitespace-nowrap sticky left-0 bg-white group-hover:bg-gray-50 z-10 border-r border-gray-100 text-center">
                     <input type="checkbox" class="row-checkbox custom-checkbox" data-index="${index}" onchange="updateDeleteButtonState()">
@@ -411,13 +431,11 @@
                     ${item.nome}
                     ${item.nome_en ? `<br><span class="text-xs text-gray-500">(${item.nome_en})</span>` : ''}
                 </td>
-                <!-- CAMPO ÁREA RESPONSÁVEL -->
-                <td class="px-6 py-4 text-gray-700 font-medium">${item.area}</td>
                 <td class="px-6 py-4 text-gray-600 font-mono text-xs bg-gray-50 rounded mx-2 border border-gray-100">${item.formula}</td>
                 <td class="px-6 py-4 text-gray-600">${item.detalhe}</td>
                 <td class="px-6 py-4 text-gray-600">
                     <div class="flex flex-col gap-1">
-                        <span class="text-xs font-semibold"><i class="${sourceIcon} mr-1"></i> ${item.fonte}</span>
+                        <span class="text-xs font-semibold"><i class="fas fa-database mr-1"></i> ${item.fonte}</span>
                         <span class="text-xs text-gray-500">Resp: ${item.resp_fonte}</span>
                     </div>
                 </td>
@@ -428,9 +446,7 @@
                     <p class="mb-1"><strong class="text-red-500">Dor:</strong> ${item.dor}</p>
                     <p><strong class="text-blue-500">Objetivo:</strong> ${item.obj}</p>
                 </td>
-                <td class="px-6 py-4 text-gray-500 text-xs italic">
-                    ${item.obs}
-                </td>
+                <td class="px-6 py-4 text-gray-500 text-xs italic">${item.obs}</td>
                 <td class="px-2 py-4 text-center remove-export">
                     <div class="flex items-center justify-center space-x-2">
                         <button type="button" onclick="triggerEdit(${index})" class="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer" title="Editar">
@@ -472,6 +488,7 @@
             pendingDeleteAction = () => {
                 // Remove 1 item no índice especificado
                 indicatorsData.splice(index, 1);
+                saveIndicators(); // Salva no sessionStorage
                 renderTable();
             };
             toggleConfirmModal();
@@ -483,16 +500,15 @@
             if (checkboxes.length === 0) return;
 
             // Extrai os índices (inteiros)
-            // IMPORTANTE: Mapear os data-index dos elementos selecionados
-            const indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index)).sort((a, b) => b - a); // Ordena decrescente para não quebrar a indexação durante a exclusão
+            const indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
 
             document.getElementById('confirm-message').innerText = `Tem certeza que deseja excluir ${indicesToDelete.length} itens selecionados?`;
             
             pendingDeleteAction = () => {
                 // Filtra o array mantendo apenas os que NÃO estão na lista de exclusão
-                // Usando filter para criar um novo array de forma segura
-                const indicesSet = new Set(indicesToDelete);
-                indicatorsData = indicatorsData.filter((_, idx) => !indicesSet.has(idx));
+                // filter cria um novo array
+                indicatorsData = indicatorsData.filter((_, idx) => !indicesToDelete.includes(idx));
+                saveIndicators(); // Salva no sessionStorage
                 renderTable();
             };
             toggleConfirmModal();
@@ -527,6 +543,7 @@
 
         // --- LÓGICA DE ADICIONAR / EDITAR (MODAL FORM) ---
         
+        // Abre modal para NOVO item
         function openModal() {
             resetForm();
             document.getElementById('modal-title').innerText = "Novo Indicador";
@@ -534,6 +551,7 @@
             toggleModalDisplay(true);
         }
 
+        // Abre modal para EDITAR item existente
         function triggerEdit(index) {
             const item = indicatorsData[index];
             if(!item) return;
@@ -546,11 +564,10 @@
             document.getElementById('formula').value = item.formula;
             document.getElementById('detalhamento').value = item.detalhe;
             document.getElementById('fonte').value = item.fonte;
-            document.getElementById('resp_fonte').value = item.resp_fonte || '';
+            document.getElementById('resp_fonte').value = item.resp_fonte;
             document.getElementById('dor').value = item.dor;
             document.getElementById('objetivo').value = item.obj;
             document.getElementById('obs').value = item.obs;
-            document.getElementById('area').value = item.area || 'Atração de Talentos (R&S)'; // Preenche o campo de área
 
             document.getElementById('modal-title').innerText = "Editar Indicador";
             document.getElementById('btnSave').innerText = "Atualizar";
@@ -577,7 +594,6 @@
         function resetForm() {
             document.getElementById('indicatorForm').reset();
             document.getElementById('editIndex').value = "";
-            document.getElementById('area').value = 'Atração de Talentos (R&S)'; // Padrão
         }
 
         function saveIndicator() {
@@ -587,7 +603,7 @@
             const itemData = {
                 tipo: document.getElementById('tipo').value,
                 nome: document.getElementById('nome').value,
-                nome_en: "",
+                nome_en: "", // Não editável no form simplificado
                 formula: document.getElementById('formula').value,
                 detalhe: document.getElementById('detalhamento').value,
                 fonte: document.getElementById('fonte').value,
@@ -595,31 +611,31 @@
                 period: document.getElementById('periodicidade').value,
                 dor: document.getElementById('dor').value,
                 obj: document.getElementById('objetivo').value,
-                obs: document.getElementById('obs').value,
-                area: document.getElementById('area').value // Lendo o novo campo de área
+                obs: document.getElementById('obs').value
             };
 
             if (!itemData.nome) {
-                alert("O nome do indicador é obrigatório.");
-                return;
-            }
-
-            if (!itemData.area) {
-                alert("A Área Responsável é obrigatória.");
+                // Não usamos alert(), apenas para demonstração de erro simples:
+                console.error("O nome do indicador é obrigatório."); 
                 return;
             }
 
             if (editIndex === "") {
                 // MODO CRIAR
-                indicatorsData.unshift(itemData);
+                indicatorsData.unshift(itemData); // Adiciona no topo
+                console.log("[Ação CRUD] Indicador criado. Chamando saveIndicators...");
             } else {
                 // MODO EDITAR
                 const idx = parseInt(editIndex);
+                // Preserva nome em inglês se existir, pois não está no form
                 if (indicatorsData[idx] && indicatorsData[idx].nome_en) {
                     itemData.nome_en = indicatorsData[idx].nome_en;
                 }
                 indicatorsData[idx] = itemData;
+                 console.log("[Ação CRUD] Indicador editado. Chamando saveIndicators...");
             }
+
+            saveIndicators(); // Salva no sessionStorage
 
             // Redesenha tabela e fecha
             renderTable();
@@ -659,33 +675,28 @@
             let csv = [];
             const BOM = "\uFEFF"; 
 
-            const headers = ["Tipo", "Nome do Indicador", "Área", "Fórmula", "DETALHES", "Fonte", "Responsável Fonte", "Periodicidade", "Motivo & Objetivo", "Observação"];
-            csv.push(headers.map(h => `"${h}"`).join(";")); 
+            // Header (pula checkbox[0] e ações[last])
+            const headers = [];
+            const headerCells = table.querySelectorAll("thead th");
+            for (let i = 1; i < headerCells.length - 1; i++) { 
+                headers.push('"' + headerCells[i].innerText.replace(/"/g, '""').replace(/\n/g, " ") + '"');
+            }
+            csv.push(headers.join(";")); 
 
-            // Dados
-            indicatorsData.forEach(item => {
+            // Dados (pula checkbox[0] e ações[last])
+            const rows = table.querySelectorAll("tbody tr");
+            rows.forEach(row => {
                 const rowData = [];
-                // Mapeia os campos na ordem das colunas visíveis + Área
-                rowData.push(item.tipo);
-                rowData.push(`${item.nome} ${item.nome_en ? '(' + item.nome_en + ')' : ''}`);
-                rowData.push(item.area); // CAMPO ÁREA
-                rowData.push(item.formula);
-                rowData.push(item.detalhe); // CAMPO DETALHES
-                rowData.push(item.fonte);
-                rowData.push(item.resp_fonte);
-                rowData.push(item.period);
-                rowData.push(`Dor: ${item.dor} | Objetivo: ${item.obj}`);
-                rowData.push(item.obs);
-
-                // Formatação final CSV
-                const csvRow = rowData.map(data => {
-                    let text = data || '';
-                    // Limpeza de quebras de linha e espaços duplos
-                    text = text.replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, " ").trim();
-                    // Escapar aspas duplas e envolver em aspas
-                    return '"' + text.replace(/"/g, '""') + '"';
-                });
-                csv.push(csvRow.join(";"));
+                const cells = row.querySelectorAll("td");
+                for (let i = 1; i < cells.length - 1; i++) {
+                    let text = cells[i].innerText;
+                    text = text.replace(/(\r\n|\n|\r)/gm, " "); 
+                    text = text.replace(/\s+/g, " ").trim(); 
+                    if(i === 5) text = text.replace("Resp:", " | Resp:"); 
+                    if(i === 7) text = text.replace("Objetivo:", " | Objetivo:");
+                    rowData.push('"' + text.replace(/"/g, '""') + '"');
+                }
+                csv.push(rowData.join(";"));
             });
 
             const csvString = BOM + csv.join("\n");
@@ -693,7 +704,7 @@
             const link = document.createElement("a");
             const date = new Date().toISOString().slice(0, 10);
             link.href = URL.createObjectURL(blob);
-            link.download = `Matriz_Indicadores_TA_${date}.csv`;
+            link.download = `Indicadores_TA_${date}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -705,6 +716,7 @@
             if (evt.key === "Escape" || evt.key === "Esc") {
                 if(document.body.classList.contains('modal-active')) {
                     closeModal();
+                    // Fecha confirmação se estiver aberta
                     const confirmModal = document.getElementById('confirm-modal');
                     if(!confirmModal.classList.contains('opacity-0')) toggleConfirmModal();
                 }
