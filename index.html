@@ -61,7 +61,8 @@
         <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">Matriz de Indicadores</h1>
-                <p class="text-indigo-200 text-sm mt-1">Talent Acquisition & Assessment de Liderança</p>
+                <!-- SUBTÍTULO ATUALIZADO (Genérico) -->
+                <p class="text-indigo-200 text-sm mt-1">Iniciativa People Analytics - Matriz de Documentação de Indicadores</p>
             </div>
             <div class="mt-4 md:mt-0 flex gap-3 items-center">
                 
@@ -143,6 +144,8 @@
                             </th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Tipo</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Nome do Indicador</th>
+                            <!-- NOVA COLUNA DE ÁREA -->
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px] sticky top-0 z-10 bg-gray-50 border-b">Área Responsável</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[200px] sticky top-0 z-10 bg-gray-50 border-b">Fórmula</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px] sticky top-0 z-10 bg-gray-50 border-b">Descrição Resumida</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Fonte / Resp.</th>
@@ -203,6 +206,12 @@
                             <option value="Anual">Anual</option>
                         </select>
                     </div>
+                    <!-- NOVO CAMPO: ÁREA -->
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="area">Área Responsável</label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="area" type="text" placeholder="Ex: Atração de Talentos / R&S" required>
+                    </div>
+                    
                     <div class="col-span-1 md:col-span-2">
                         <label class="block text-gray-700 text-sm font-bold mb-2" for="nome">Nome do Indicador</label>
                         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="nome" type="text" placeholder="Ex: Turnover Precoce" required>
@@ -301,17 +310,17 @@
     <script>
         // --- DADOS GLOBAIS (Database Local) ---
         let indicatorsData = [
-            { tipo: "KPI", nome: "Tempo de Fechamento", nome_en: "Time to Fill", formula: "Média(Data Fechamento - Data Abertura)", detalhe: "Mede a eficiência operacional do R&S, calculando o tempo médio que leva para preencher uma vaga desde a abertura.", obs: "Dimensões: Diretoria, Cargo, Recrutador.", period: "Mensal", dor: "Demora em repor posições críticas.", obj: "Otimizar velocidade sem perder qualidade." },
-            { tipo: "KPI", nome: "Retenção de Novos Contratados (12M)", nome_en: "New Hire Retention", formula: "(Contratados que permaneceram > 12M / Total de Contratados) * 100", detalhe: "Mede o percentual de pessoas que permanecem na empresa por um período superior a 12 meses após a contratação.", obs: "Dimensões: Gestor, Área, Fonte de Recrutamento.", period: "Trimestral", dor: "Custo e retrabalho por contratação não assertiva.", obj: "Validar a qualidade da seleção e do fit cultural de longo prazo." },
-            { tipo: "KPI", nome: "Taxa de Aceite de Proposta", nome_en: "Offer Acceptance Rate", formula: "(Ofertas Aceitas / Total Ofertas) * 100", detalhe: "Percentual de candidatos que aceitam a proposta de emprego formalizada pela empresa.", obs: "Dimensões: Cargo, Área, Faixa Salarial.", period: "Mensal", dor: "Perder talentos na etapa final.", obj: "Ajustar pacote de benefícios e competitividade salarial." },
-            { tipo: "KPI", nome: "Custo por Contratação", nome_en: "Cost per Hire", formula: "(Custos Internos + Custos Externos) / Nº Contratações", detalhe: "Indica o valor médio que a empresa gasta para preencher uma vaga.", obs: "Dimensões: Área, Nível Hierárquico. Incluir Headhunters e licenças.", period: "Trimestral", dor: "Orçamento estourado / ROI desconhecido.", obj: "Otimizar budget em fontes eficazes." },
-            { tipo: "Indicador", nome: "Turnover Precoce (90 dias)", nome_en: "Early Turnover", formula: "(Desligados < 90 dias / Contratados no período) * 100", detalhe: "Mede a taxa de desligamentos que ocorrem nos primeiros 90 dias de trabalho.", obs: "Dimensões: Gestor, Área, Fonte, BP. Monitorar janelas de 6 e 12 meses.", period: "Trimestral", dor: "Erro na contratação ou falha no onboarding.", obj: "Validar qualidade da seleção e fit cultural." },
-            { tipo: "Métrica", nome: "Eficiência do Funil", nome_en: "Pass-through Rate", formula: "(Candidatos na etapa X / Candidatos na etapa anterior) %", detalhe: "Mede a eficiência de conversão entre cada etapa do processo seletivo.", obs: "Dimensões: Etapa, Recrutador, Vaga. Verificar reprovação por gestor.", period: "Semanal", dor: "Triagem ineficiente ou gargalo em etapas.", obj: "Identificar gargalos no funil." },
-            { tipo: "Indicador", nome: "Satisfação do Gestor", nome_en: "HM Satisfaction", formula: "Média nota (1-5) ou NPS da pesquisa pós-vaga", detalhe: "Mede o nível de satisfação do gestor contratante com o processo de R&S e o perfil do candidato.", obs: "Dimensões: Gestor, Diretoria, Recrutador. Enviar 7 dias pós-fechamento.", period: "Mensal", dor: "Desalinhamento RH x Negócio.", obj: "Promover parceria consultiva e alinhamento." },
-            { tipo: "Indicador", nome: "Qualidade da Origem", nome_en: "Source Quality", formula: "(Contratados de Alta Performance / Total Contratados por Fonte)", detalhe: "Mede quais canais de recrutamento estão trazendo os candidatos que performam melhor a longo prazo.", obs: "Dimensões: Fonte (LinkedIn, Gupy, Indicação). Cruza com avaliação de 90 dias.", period: "Semestral", dor: "Gasto em fontes de baixa qualidade.", obj: "Otimizar investimento em fontes eficazes." },
-            { tipo: "Indicador", nome: "Aproveitamento Interno", nome_en: "Liderança", formula: "(Vagas de Liderança Fechadas Internamente / Total Vagas Liderança) * 100", detalhe: "Mede a eficácia dos programas de desenvolvimento e sucessão de líderes internos.", obs: "Dimensões: Diretoria, Nível. Se baixo, rever Trainee/Sucessão.", period: "Mensal", dor: "Pipeline de sucessão fraco.", obj: "Medir eficácia de DHO e mobilidade interna." },
-            { tipo: "Métrica", nome: "Diversidade no Shortlist", nome_en: "", formula: "% de candidatos de grupos sub-representados na etapa final", detalhe: "Mede a representatividade de grupos minoritários na etapa final do funil de recrutamento.", obs: "Dimensões: Gênero, Raça, PcD. Foco na etapa final.", period: "Mensal", dor: "Contratações homogêneas.", obj: "Garantir representatividade na boca do funil." },
-            { tipo: "Métrica", nome: "Vagas Abertas vs Fechadas", nome_en: "Volume", formula: "Contagem simples (Snapshot)", detalhe: "Contagem do volume de vagas em cada status (abertas, em andamento, fechadas).", obs: "Dimensões: Status, Recrutador. Usado para balanceamento de carga.", period: "Semanal", dor: "Backlog acumulado.", obj: "Balanceamento de carga do time de R&S." },
+            { tipo: "KPI", nome: "Tempo de Fechamento", nome_en: "Time to Fill", formula: "Média(Data Fechamento - Data Abertura)", detalhe: "Mede a eficiência operacional do R&S, calculando o tempo médio que leva para preencher uma vaga desde a abertura.", obs: "Dimensões: Diretoria, Cargo, Recrutador.", period: "Mensal", dor: "Demora em repor posições críticas.", obj: "Otimizar velocidade sem perder qualidade.", area: "Atração de Talentos (R&S)" },
+            { tipo: "KPI", nome: "Retenção de Novos Contratados (12M)", nome_en: "New Hire Retention", formula: "(Contratados que permaneceram > 12M / Total de Contratados) * 100", detalhe: "Mede o percentual de pessoas que permanecem na empresa por um período superior a 12 meses após a contratação.", obs: "Dimensões: Gestor, Área, Fonte de Recrutamento.", period: "Trimestral", dor: "Custo e retrabalho por contratação não assertiva.", obj: "Validar a qualidade da seleção e do fit cultural de longo prazo.", area: "Atração de Talentos (R&S)" },
+            { tipo: "KPI", nome: "Taxa de Aceite de Proposta", nome_en: "Offer Acceptance Rate", formula: "(Ofertas Aceitas / Total Ofertas) * 100", detalhe: "Percentual de candidatos que aceitam a proposta de emprego formalizada pela empresa.", obs: "Dimensões: Cargo, Área, Faixa Salarial.", period: "Mensal", dor: "Perder talentos na etapa final.", obj: "Ajustar pacote de benefícios e competitividade salarial.", area: "Atração de Talentos (R&S)" },
+            { tipo: "KPI", nome: "Custo por Contratação", nome_en: "Cost per Hire", formula: "(Custos Internos + Custos Externos) / Nº Contratações", detalhe: "Indica o valor médio que a empresa gasta para preencher uma vaga.", obs: "Dimensões: Área, Nível Hierárquico. Incluir Headhunters e licenças.", period: "Trimestral", dor: "Orçamento estourado / ROI desconhecido.", obj: "Otimizar budget em fontes eficazes.", area: "Atração de Talentos (R&S)" },
+            { tipo: "Indicador", nome: "Turnover Precoce (90 dias)", nome_en: "Early Turnover", formula: "(Desligados < 90 dias / Contratados no período) * 100", detalhe: "Mede a taxa de desligamentos que ocorrem nos primeiros 90 dias de trabalho.", obs: "Dimensões: Gestor, Área, Fonte, BP. Monitorar janelas de 6 e 12 meses.", period: "Trimestral", dor: "Erro na contratação ou falha no onboarding.", obj: "Validar qualidade da seleção e fit cultural.", area: "Atração de Talentos (R&S)" },
+            { tipo: "Métrica", nome: "Eficiência do Funil", nome_en: "Pass-through Rate", formula: "(Candidatos na etapa X / Candidatos na etapa anterior) %", detalhe: "Mede a eficiência de conversão entre cada etapa do processo seletivo.", obs: "Dimensões: Etapa, Recrutador, Vaga. Verificar reprovação por gestor.", period: "Semanal", dor: "Triagem ineficiente ou gargalo em etapas.", obj: "Identificar gargalos no funil.", area: "Atração de Talentos (R&S)" },
+            { tipo: "Indicador", nome: "Satisfação do Gestor", nome_en: "HM Satisfaction", formula: "Média nota (1-5) ou NPS da pesquisa pós-vaga", detalhe: "Mede o nível de satisfação do gestor contratante com o processo de R&S e o perfil do candidato.", obs: "Dimensões: Gestor, Diretoria, Recrutador. Enviar 7 dias pós-fechamento.", period: "Mensal", dor: "Desalinhamento RH x Negócio.", obj: "Promover parceria consultiva e alinhamento.", area: "Atração de Talentos (R&S)" },
+            { tipo: "Indicador", nome: "Qualidade da Origem", nome_en: "Source Quality", formula: "(Contratados de Alta Performance / Total Contratados por Fonte)", detalhe: "Mede quais canais de recrutamento estão trazendo os candidatos que performam melhor a longo prazo.", obs: "Dimensões: Fonte (LinkedIn, Gupy, Indicação). Cruza com avaliação de 90 dias.", period: "Semestral", dor: "Gasto em fontes de baixa qualidade.", obj: "Otimizar investimento em fontes eficazes.", area: "Atração de Talentos (R&S)" },
+            { tipo: "Indicador", nome: "Aproveitamento Interno", nome_en: "Liderança", formula: "(Vagas de Liderança Fechadas Internamente / Total Vagas Liderança) * 100", detalhe: "Mede a eficácia dos programas de desenvolvimento e sucessão de líderes internos.", obs: "Dimensões: Diretoria, Nível. Se baixo, rever Trainee/Sucessão.", period: "Mensal", dor: "Pipeline de sucessão fraco.", obj: "Medir eficácia de DHO e mobilidade interna.", area: "Desenvolvimento Humano e Organizacional (DHO)" },
+            { tipo: "Métrica", nome: "Diversidade no Shortlist", nome_en: "", formula: "% de candidatos de grupos sub-representados na etapa final", detalhe: "Mede a representatividade de grupos minoritários na etapa final do funil de recrutamento.", obs: "Dimensões: Gênero, Raça, PcD. Foco na etapa final.", period: "Mensal", dor: "Contratações homogêneas.", obj: "Garantir representatividade na boca do funil.", area: "Diversidade & Inclusão (D&I)" },
+            { tipo: "Métrica", nome: "Vagas Abertas vs Fechadas", nome_en: "Volume", formula: "Contagem simples (Snapshot)", detalhe: "Contagem do volume de vagas em cada status (abertas, em andamento, fechadas).", obs: "Dimensões: Status, Recrutador. Usado para balanceamento de carga.", period: "Semanal", dor: "Backlog acumulado.", obj: "Balanceamento de carga do time de R&S.", area: "Atração de Talentos (R&S)" },
         ];
 
         // Fontes de Dados e Responsáveis (Para preencher o form)
@@ -385,7 +394,7 @@
             if (item.period === 'Semestral') pColor = "purple";
             if (item.period === 'Anual') pColor = "red";
 
-            // Tenta obter o ícone da fonte. Adicionado (item.fonte || '') para evitar erro de .includes em undefined.
+            // Tenta obter o ícone da fonte.
             const sourceInfo = Object.entries(SOURCE_DATA).find(([key]) => (item.fonte || '').includes(key));
             const sourceIcon = sourceInfo ? sourceInfo[1].icon : 'fas fa-database';
 
@@ -400,6 +409,8 @@
                     ${item.nome}
                     ${item.nome_en ? `<br><span class="text-xs text-gray-500">(${item.nome_en})</span>` : ''}
                 </td>
+                <!-- NOVO CAMPO ÁREA RESPONSÁVEL -->
+                <td class="px-6 py-4 text-gray-700 font-medium">${item.area}</td>
                 <td class="px-6 py-4 text-gray-600 font-mono text-xs bg-gray-50 rounded mx-2 border border-gray-100">${item.formula}</td>
                 <td class="px-6 py-4 text-gray-600">${item.detalhe}</td>
                 <td class="px-6 py-4 text-gray-600">
@@ -415,7 +426,9 @@
                     <p class="mb-1"><strong class="text-red-500">Dor:</strong> ${item.dor}</p>
                     <p><strong class="text-blue-500">Objetivo:</strong> ${item.obj}</p>
                 </td>
-                <td class="px-6 py-4 text-gray-500 text-xs italic">${item.obs}</td>
+                <td class="px-6 py-4 text-gray-500 text-xs italic">
+                    ${item.obs}
+                </td>
                 <td class="px-2 py-4 text-center remove-export">
                     <div class="flex items-center justify-center space-x-2">
                         <button type="button" onclick="triggerEdit(${index})" class="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer" title="Editar">
@@ -529,12 +542,13 @@
             document.getElementById('periodicidade').value = item.period;
             document.getElementById('nome').value = item.nome;
             document.getElementById('formula').value = item.formula;
-            document.getElementById('detalhamento').value = item.detalhe; // Detalhe agora é a descrição resumida
+            document.getElementById('detalhamento').value = item.detalhe;
             document.getElementById('fonte').value = item.fonte;
-            document.getElementById('resp_fonte').value = item.resp_fonte || ''; // Campo novo, pode vir vazio do init
+            document.getElementById('resp_fonte').value = item.resp_fonte || '';
             document.getElementById('dor').value = item.dor;
             document.getElementById('objetivo').value = item.obj;
             document.getElementById('obs').value = item.obs;
+            document.getElementById('area').value = item.area || 'Atração de Talentos (R&S)'; // Preenche o novo campo de área
 
             document.getElementById('modal-title').innerText = "Editar Indicador";
             document.getElementById('btnSave').innerText = "Atualizar";
@@ -561,6 +575,7 @@
         function resetForm() {
             document.getElementById('indicatorForm').reset();
             document.getElementById('editIndex').value = "";
+            document.getElementById('area').value = 'Atração de Talentos (R&S)'; // Padrão
         }
 
         function saveIndicator() {
@@ -578,11 +593,17 @@
                 period: document.getElementById('periodicidade').value,
                 dor: document.getElementById('dor').value,
                 obj: document.getElementById('objetivo').value,
-                obs: document.getElementById('obs').value
+                obs: document.getElementById('obs').value,
+                area: document.getElementById('area').value // Lendo o novo campo de área
             };
 
             if (!itemData.nome) {
                 alert("O nome do indicador é obrigatório.");
+                return;
+            }
+
+            if (!itemData.area) {
+                alert("A Área Responsável é obrigatória.");
                 return;
             }
 
@@ -636,23 +657,20 @@
             let csv = [];
             const BOM = "\uFEFF"; 
 
-            const headers = [];
-            const headerCells = table.querySelectorAll("thead th");
-            // Começa em i=1 (pula checkbox), vai até length-1 (pula ações)
-            for (let i = 1; i < headerCells.length - 1; i++) { 
-                headers.push('"' + headerCells[i].innerText.replace(/"/g, '""').replace(/\n/g, " ") + '"');
-            }
-            csv.push(headers.join(";")); 
+            const headers = ["Tipo", "Nome do Indicador", "Área", "Fórmula", "Descrição Resumida", "Fonte", "Responsável Fonte", "Periodicidade", "Motivo & Objetivo", "Observação"];
+            csv.push(headers.map(h => `"${h}"`).join(";")); 
 
-            // Dados (pula checkbox[0] e ações[last])
+            // Dados
             indicatorsData.forEach(item => {
                 const rowData = [];
-                // Mapeia os campos na ordem das colunas visíveis
+                // Mapeia os campos na ordem das colunas visíveis + Área
                 rowData.push(item.tipo);
                 rowData.push(`${item.nome} ${item.nome_en ? '(' + item.nome_en + ')' : ''}`);
+                rowData.push(item.area); // NOVO CAMPO ÁREA
                 rowData.push(item.formula);
-                rowData.push(item.detalhe); // Descrição Resumida
-                rowData.push(`${item.fonte} | Resp: ${item.resp_fonte}`);
+                rowData.push(item.detalhe); 
+                rowData.push(item.fonte);
+                rowData.push(item.resp_fonte);
                 rowData.push(item.period);
                 rowData.push(`Dor: ${item.dor} | Objetivo: ${item.obj}`);
                 rowData.push(item.obs);
