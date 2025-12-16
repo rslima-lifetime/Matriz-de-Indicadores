@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matriz de Indicadores - Talent Acquisition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .table-container {
+            overflow-x: auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            max-height: 75vh;
+        }
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        body.modal-active {
+            overflow-x: hidden;
+            overflow-y: visible !important;
+        }
+        /* Checkbox Custom Style */
+        .custom-checkbox {
+            cursor: pointer;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 0.25rem;
+            border-color: #d1d5db;
+            color: #4f46e5; 
+        }
+        .custom-checkbox:focus {
+            ring: 2px;
+            ring-color: #6366f1;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased h-screen flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="bg-indigo-900 text-white shadow-lg flex-none z-30">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">Matriz de Indicadores</h1>
+                <p class="text-indigo-200 text-sm mt-1">Talent Acquisition & Assessment de Liderança</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex gap-3 items-center">
+                
+                <!-- Botão Excluir Selecionados -->
+                <button id="btnDeleteSelected" type="button" onclick="triggerBulkDelete()" class="hidden bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow flex items-center transition duration-150 ease-in-out border border-red-500 animate-pulse cursor-pointer">
+                    <i class="fas fa-trash-alt mr-2"></i> Excluir (<span id="selectedCount">0</span>)
+                </button>
+
+                <!-- Botão Exportar Excel -->
+                <button type="button" onclick="exportToExcel()" class="bg-indigo-700 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded shadow flex items-center transition duration-150 ease-in-out border border-indigo-500 cursor-pointer">
+                    <i class="fas fa-file-excel mr-2"></i> Exportar
+                </button>
+                
+                <!-- Botão Novo Indicador -->
+                <button type="button" onclick="openModal()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow flex items-center transition duration-150 ease-in-out cursor-pointer">
+                    <i class="fas fa-plus mr-2"></i> Novo
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-[98%] mx-auto py-6 overflow-hidden flex flex-col">
+        
+        <!-- Legend Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 flex-none">
+            <!-- KPI Card -->
+            <div class="bg-white p-3 rounded-lg border-l-4 border-green-500 shadow-sm flex items-center justify-between group hover:shadow-md transition-shadow">
+                <div class="flex items-center">
+                    <div class="p-2 bg-green-100 rounded-full mr-3 text-green-600"><i class="fas fa-chart-line"></i></div>
+                    <div>
+                        <h3 class="font-bold text-gray-700 text-sm">KPI</h3>
+                        <p class="text-[10px] text-gray-500">Estratégico</p>
+                    </div>
+                </div>
+                <button onclick="showDefinition('KPI')" class="text-gray-400 hover:text-green-600 transition-colors p-2" title="O que é um KPI?">
+                    <i class="fas fa-info-circle text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Indicador Card -->
+            <div class="bg-white p-3 rounded-lg border-l-4 border-blue-500 shadow-sm flex items-center justify-between group hover:shadow-md transition-shadow">
+                <div class="flex items-center">
+                    <div class="p-2 bg-blue-100 rounded-full mr-3 text-blue-600"><i class="fas fa-chart-pie"></i></div>
+                    <div>
+                        <h3 class="font-bold text-gray-700 text-sm">Indicador</h3>
+                        <p class="text-[10px] text-gray-500">Tático</p>
+                    </div>
+                </div>
+                <button onclick="showDefinition('Indicador')" class="text-gray-400 hover:text-blue-600 transition-colors p-2" title="O que é um Indicador?">
+                    <i class="fas fa-info-circle text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Métrica Card -->
+            <div class="bg-white p-3 rounded-lg border-l-4 border-gray-500 shadow-sm flex items-center justify-between group hover:shadow-md transition-shadow">
+                <div class="flex items-center">
+                    <div class="p-2 bg-gray-100 rounded-full mr-3 text-gray-600"><i class="fas fa-ruler-combined"></i></div>
+                    <div>
+                        <h3 class="font-bold text-gray-700 text-sm">Métrica</h3>
+                        <p class="text-[10px] text-gray-500">Operacional</p>
+                    </div>
+                </div>
+                <button onclick="showDefinition('Métrica')" class="text-gray-400 hover:text-gray-600 transition-colors p-2" title="O que é uma Métrica?">
+                    <i class="fas fa-info-circle text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="bg-white rounded-lg shadow overflow-hidden flex-grow flex flex-col">
+            <div class="table-container flex-grow">
+                <table class="min-w-full divide-y divide-gray-200 relative" id="indicadores-table">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <!-- Checkbox Column -->
+                            <th scope="col" class="px-4 py-3 text-left sticky top-0 left-0 bg-gray-50 z-20 shadow-sm border-b w-10">
+                                <input type="checkbox" id="selectAll" class="custom-checkbox" onchange="toggleSelectAll(this)">
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Tipo</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Nome do Indicador</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[200px] sticky top-0 z-10 bg-gray-50 border-b">Fórmula</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px] sticky top-0 z-10 bg-gray-50 border-b">Descrição Resumida</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Fonte / Resp.</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Periodicidade</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[300px] sticky top-0 z-10 bg-gray-50 border-b">Motivo (Dor) & Objetivo</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[200px] sticky top-0 z-10 bg-gray-50 border-b">Observação</th>
+                            <th scope="col" class="px-2 py-3 sticky top-0 z-10 bg-gray-50 border-b remove-export text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 text-sm" id="table-body">
+                        <!-- Rows populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-6 py-2 bg-gray-50 border-t border-gray-200 flex-none flex justify-between items-center">
+                <p class="text-xs text-gray-500">
+                    Selecionados: <span id="selected-label-count" class="font-bold text-indigo-600">0</span>
+                </p>
+                <p class="text-xs text-gray-500">
+                    Total de itens: <span id="total-count" class="font-bold">0</span>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Form (Novo / Editar) -->
+    <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50" id="modal-id">
+        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+        <div class="modal-container bg-white w-11/12 md:max-w-4xl mx-auto rounded shadow-lg z-50 overflow-y-auto max-h-[90vh]">
+            <div class="modal-content py-4 text-left px-6">
+                <div class="flex justify-between items-center pb-3 border-b">
+                    <p class="text-2xl font-bold text-indigo-900" id="modal-title">Novo Indicador</p>
+                    <div class="modal-close cursor-pointer z-50" onclick="closeModal()">
+                        <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+                            <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <form id="indicatorForm" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="hidden" id="editIndex" value="">
+                    
+                    <div class="col-span-1">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="tipo">Tipo</label>
+                        <select id="tipo" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value="KPI">KPI</option>
+                            <option value="Indicador">Indicador</option>
+                            <option value="Métrica">Métrica</option>
+                        </select>
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="periodicidade">Periodicidade</label>
+                        <select id="periodicidade" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value="Diário">Diário</option>
+                            <option value="Semanal">Semanal</option>
+                            <option value="Mensal" selected>Mensal</option>
+                            <option value="Trimestral">Trimestral</option>
+                            <option value="Semestral">Semestral</option>
+                            <option value="Anual">Anual</option>
+                        </select>
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="nome">Nome do Indicador</label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="nome" type="text" placeholder="Ex: Turnover Precoce" required>
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="formula">Fórmula</label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 font-mono text-sm leading-tight focus:outline-none focus:shadow-outline" id="formula" type="text" placeholder="Ex: (Saídas / Ativos) * 100">
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="detalhamento">Descrição Resumida</label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="detalhamento" type="text" placeholder="O que este indicador mede, em termos simples.">
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="fonte">Fonte de Dados</label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="fonte" type="text" placeholder="Ex: ATS (Gupy), Excel">
+                    </div>
+                    <div class="col-span-1">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="resp_fonte">Responsável pela Fonte</label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="resp_fonte" type="text" placeholder="Ex: TI, Adm de Pessoal">
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="dor">Motivo (A dor a resolver)</label>
+                        <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="dor" rows="2" placeholder="Qual problema esse indicador resolve?"></textarea>
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="objetivo">Objetivo Estratégico</label>
+                        <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="objetivo" rows="2" placeholder="Onde queremos chegar?"></textarea>
+                    </div>
+                     <div class="col-span-1 md:col-span-2">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="obs">Observação</label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="obs" type="text" placeholder="Detalhes adicionais (e.g., Dimensões: Cargo, Unidade)">
+                    </div>
+                </form>
+                <div class="flex justify-end pt-4 border-t mt-4">
+                    <button onclick="closeModal()" class="px-4 py-2 bg-transparent p-3 rounded-lg text-indigo-500 hover:bg-gray-100 hover:text-indigo-400 mr-2">Cancelar</button>
+                    <button onclick="saveIndicator()" id="btnSave" class="modal-close px-4 py-2 bg-indigo-600 p-3 rounded-lg text-white hover:bg-indigo-500 font-bold shadow">Salvar Indicador</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50" id="confirm-modal">
+        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
+        <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto animate-fade-in-up">
+            <div class="modal-content py-4 text-left px-6">
+                <div class="flex justify-between items-center pb-3">
+                    <p class="text-xl font-bold text-gray-900"><i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Confirmação</p>
+                    <div class="modal-close cursor-pointer z-50" onclick="toggleConfirmModal()">
+                        <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+                            <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <p id="confirm-message" class="text-gray-700 font-medium mb-6 mt-2">Tem certeza que deseja excluir?</p>
+                <div class="flex justify-end pt-2">
+                    <button onclick="toggleConfirmModal()" class="px-4 py-2 bg-gray-100 p-3 rounded-lg text-gray-600 hover:bg-gray-200 hover:text-gray-800 mr-2 font-medium">Cancelar</button>
+                    <button id="confirm-btn-action" class="px-4 py-2 bg-red-600 p-3 rounded-lg text-white hover:bg-red-700 font-bold shadow-md transition-colors">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Definições -->
+    <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50" id="definition-modal">
+        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-60" onclick="closeDefinition()"></div>
+        <div class="modal-container bg-white w-11/12 md:max-w-lg mx-auto rounded-lg shadow-2xl z-50 animate-fade-in-down overflow-hidden">
+            <div id="def-header" class="px-6 py-4 flex justify-between items-center border-b border-gray-100">
+                <h3 id="def-title" class="font-bold text-xl"></h3>
+                <button onclick="closeDefinition()" class="text-white hover:text-gray-200 focus:outline-none">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="px-6 py-6 text-gray-700">
+                <div class="mb-4">
+                    <h4 class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-1">Definição</h4>
+                    <p id="def-desc" class="text-base leading-relaxed"></p>
+                </div>
+                <div class="mb-4 bg-gray-50 p-3 rounded-md border border-gray-200">
+                    <h4 class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-1">Analogia Prática</h4>
+                    <p id="def-analogy" class="text-sm italic"></p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-1">Exemplos</h4>
+                    <ul id="def-examples" class="list-disc list-inside text-sm space-y-1"></ul>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-6 py-3 flex justify-end">
+                <button onclick="closeDefinition()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm">
+                    Entendi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DADOS GLOBAIS (Database Local) ---
+        let indicatorsData = [
+            { tipo: "KPI", nome: "Tempo de Fechamento", nome_en: "Time to Fill", formula: "Média(Data Fechamento - Data Abertura)", detalhe: "Mede a eficiência operacional do R&S, calculando o tempo médio que leva para preencher uma vaga desde a abertura.", obs: "Dimensões: Diretoria, Cargo, Recrutador.", period: "Mensal", dor: "Demora em repor posições críticas.", obj: "Otimizar velocidade sem perder qualidade." },
+            { tipo: "KPI", nome: "Retenção de Novos Contratados (12M)", nome_en: "New Hire Retention", formula: "(Contratados que permaneceram > 12M / Total de Contratados) * 100", detalhe: "Mede o percentual de pessoas que permanecem na empresa por um período superior a 12 meses após a contratação.", obs: "Dimensões: Gestor, Área, Fonte de Recrutamento.", period: "Trimestral", dor: "Custo e retrabalho por contratação não assertiva.", obj: "Validar a qualidade da seleção e do fit cultural de longo prazo." },
+            { tipo: "KPI", nome: "Taxa de Aceite de Proposta", nome_en: "Offer Acceptance Rate", formula: "(Ofertas Aceitas / Total Ofertas) * 100", detalhe: "Percentual de candidatos que aceitam a proposta de emprego formalizada pela empresa.", obs: "Dimensões: Cargo, Área, Faixa Salarial.", period: "Mensal", dor: "Perder talentos na etapa final.", obj: "Ajustar pacote de benefícios e competitividade salarial." },
+            { tipo: "KPI", nome: "Custo por Contratação", nome_en: "Cost per Hire", formula: "(Custos Internos + Custos Externos) / Nº Contratações", detalhe: "Indica o valor médio que a empresa gasta para preencher uma vaga.", obs: "Dimensões: Área, Nível Hierárquico. Incluir Headhunters e licenças.", period: "Trimestral", dor: "Orçamento estourado / ROI desconhecido.", obj: "Otimizar budget em fontes eficazes." },
+            { tipo: "Indicador", nome: "Turnover Precoce (90 dias)", nome_en: "Early Turnover", formula: "(Desligados < 90 dias / Contratados no período) * 100", detalhe: "Mede a taxa de desligamentos que ocorrem nos primeiros 90 dias de trabalho.", obs: "Dimensões: Gestor, Área, Fonte, BP. Monitorar janelas de 6 e 12 meses.", period: "Trimestral", dor: "Erro na contratação ou falha no onboarding.", obj: "Validar qualidade da seleção e fit cultural." },
+            { tipo: "Métrica", nome: "Eficiência do Funil", nome_en: "Pass-through Rate", formula: "(Candidatos na etapa X / Candidatos na etapa anterior) %", detalhe: "Mede a eficiência de conversão entre cada etapa do processo seletivo.", obs: "Dimensões: Etapa, Recrutador, Vaga. Verificar reprovação por gestor.", period: "Semanal", dor: "Triagem ineficiente ou gargalo em etapas.", obj: "Identificar gargalos no funil." },
+            { tipo: "Indicador", nome: "Satisfação do Gestor", nome_en: "HM Satisfaction", formula: "Média nota (1-5) ou NPS da pesquisa pós-vaga", detalhe: "Mede o nível de satisfação do gestor contratante com o processo de R&S e o perfil do candidato.", obs: "Dimensões: Gestor, Diretoria, Recrutador. Enviar 7 dias pós-fechamento.", period: "Mensal", dor: "Desalinhamento RH x Negócio.", obj: "Promover parceria consultiva e alinhamento." },
+            { tipo: "Indicador", nome: "Qualidade da Origem", nome_en: "Source Quality", formula: "(Contratados de Alta Performance / Total Contratados por Fonte)", detalhe: "Mede quais canais de recrutamento estão trazendo os candidatos que performam melhor a longo prazo.", obs: "Dimensões: Fonte (LinkedIn, Gupy, Indicação). Cruza com avaliação de 90 dias.", period: "Semestral", dor: "Gasto em fontes de baixa qualidade.", obj: "Otimizar investimento em fontes eficazes." },
+            { tipo: "Indicador", nome: "Aproveitamento Interno", nome_en: "Liderança", formula: "(Vagas de Liderança Fechadas Internamente / Total Vagas Liderança) * 100", detalhe: "Mede a eficácia dos programas de desenvolvimento e sucessão de líderes internos.", obs: "Dimensões: Diretoria, Nível. Se baixo, rever Trainee/Sucessão.", period: "Mensal", dor: "Pipeline de sucessão fraco.", obj: "Medir eficácia de DHO e mobilidade interna." },
+            { tipo: "Métrica", nome: "Diversidade no Shortlist", nome_en: "", formula: "% de candidatos de grupos sub-representados na etapa final", detalhe: "Mede a representatividade de grupos minoritários na etapa final do funil de recrutamento.", obs: "Dimensões: Gênero, Raça, PcD. Foco na etapa final.", period: "Mensal", dor: "Contratações homogêneas.", obj: "Garantir representatividade na boca do funil." },
+            { tipo: "Métrica", nome: "Vagas Abertas vs Fechadas", nome_en: "Volume", formula: "Contagem simples (Snapshot)", detalhe: "Contagem do volume de vagas em cada status (abertas, em andamento, fechadas).", obs: "Dimensões: Status, Recrutador. Usado para balanceamento de carga.", period: "Semanal", dor: "Backlog acumulado.", obj: "Balanceamento de carga do time de R&S." },
+        ];
+
+        // Fontes de Dados e Responsáveis (Para preencher o form)
+        const SOURCE_DATA = {
+            'ATS (Gupy)': { resp: 'Admin ATS', icon: 'fas fa-database' },
+            'HCM (ADP/Totvs)': { resp: 'DP / Folha', icon: 'fas fa-users-cog' },
+            'ERP Financeiro': { resp: 'Financeiro', icon: 'fas fa-money-bill-wave' },
+            'Plataforma de Assessment': { resp: 'Consultoria Ext. / DHO', icon: 'fas fa-brain' },
+            'Forms / Pesquisa': { resp: 'Time P&A', icon: 'fas fa-poll' },
+            'Planilha de Controle': { resp: 'Recrutadores', icon: 'fas fa-file-excel' }
+        };
+
+        const definitions = {
+            'KPI': {
+                title: 'Key Performance Indicator (KPI)',
+                headerColor: 'bg-green-600',
+                desc: 'É o "Termômetro do Sucesso". Indicadores-chave de desempenho que estão diretamente ligados aos objetivos estratégicos da empresa. Se o KPI vai mal, a estratégia da empresa está em risco.',
+                analogy: 'Em um carro, o KPI é o Velocímetro: diz se você está na velocidade certa para chegar ao destino a tempo.',
+                examples: ['Retenção de Novos Contratados (Qualidade de Contratação)', 'Time to Fill (Agilidade/Produtividade)', 'Custo por Contratação']
+            },
+            'Indicador': {
+                title: 'Indicador Tático',
+                headerColor: 'bg-blue-600',
+                desc: 'É o "Painel de Controle". Medidas que monitoram a performance de processos específicos ou departamentos. Eles explicam o "porquê" um KPI está bom ou ruim.',
+                analogy: 'Em um carro, é o medidor de Óleo ou Temperatura: mostra a saúde de uma parte específica do motor que pode parar o carro se falhar.',
+                examples: ['Satisfação do Gestor', 'Qualidade da Origem (Source Quality)', 'Aproveitamento Interno']
+            },
+            'Métrica': {
+                title: 'Métrica Operacional',
+                headerColor: 'bg-gray-600',
+                desc: 'É a "Matéria-Prima". Dados brutos ou contagens simples que servem de base para construir indicadores. Sozinhas, não dizem se algo é bom ou ruim, apenas o volume.',
+                analogy: 'Em um carro, é o Odômetro (km rodados): diz quanto você andou, mas não se você dirigiu bem ou mal.',
+                examples: ['Número de Vagas Abertas', 'Total de Currículos Triados', 'Motivos de Declínio']
+            }
+        };
+
+        // --- INICIALIZAÇÃO ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+        });
+
+        // --- LÓGICA DE RENDERIZAÇÃO (CORE) ---
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            
+            indicatorsData.forEach((item, index) => {
+                const row = createRow(item, index);
+                tbody.appendChild(row);
+            });
+            
+            updateTotalCount();
+            
+            // Reseta botões de ação global
+            document.getElementById('selectAll').checked = false;
+            updateDeleteButtonState();
+        }
+
+        function createRow(item, index) {
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-gray-50 transition-colors group";
+            
+            let badgeClass = "bg-gray-100 text-gray-800";
+            if (item.tipo === 'KPI') badgeClass = "bg-green-100 text-green-800";
+            else if (item.tipo === 'Indicador') badgeClass = "bg-blue-100 text-blue-800";
+
+            let pColor = "gray";
+            if (item.period === 'Semanal') pColor = "green";
+            if (item.period === 'Mensal') pColor = "indigo";
+            if (item.period === 'Trimestral') pColor = "yellow";
+            if (item.period === 'Semestral') pColor = "purple";
+            if (item.period === 'Anual') pColor = "red";
+
+            // Tenta obter o ícone da fonte. Adicionado (item.fonte || '') para evitar erro de .includes em undefined.
+            const sourceInfo = Object.entries(SOURCE_DATA).find(([key]) => (item.fonte || '').includes(key));
+            const sourceIcon = sourceInfo ? sourceInfo[1].icon : 'fas fa-database';
+
+            tr.innerHTML = `
+                <td class="px-4 py-4 whitespace-nowrap sticky left-0 bg-white group-hover:bg-gray-50 z-10 border-r border-gray-100 text-center">
+                    <input type="checkbox" class="row-checkbox custom-checkbox" data-index="${index}" onchange="updateDeleteButtonState()">
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${badgeClass}">${item.tipo}</span>
+                </td>
+                <td class="px-6 py-4 font-medium text-gray-900">
+                    ${item.nome}
+                    ${item.nome_en ? `<br><span class="text-xs text-gray-500">(${item.nome_en})</span>` : ''}
+                </td>
+                <td class="px-6 py-4 text-gray-600 font-mono text-xs bg-gray-50 rounded mx-2 border border-gray-100">${item.formula}</td>
+                <td class="px-6 py-4 text-gray-600">${item.detalhe}</td>
+                <td class="px-6 py-4 text-gray-600">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs font-semibold"><i class="${sourceIcon} mr-1"></i> ${item.fonte}</span>
+                        <span class="text-xs text-gray-500">Resp: ${item.resp_fonte}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-600">
+                    <span class="bg-${pColor}-50 text-${pColor}-700 py-1 px-2 rounded text-xs border border-${pColor}-200">${item.period}</span>
+                </td>
+                <td class="px-6 py-4 text-gray-600">
+                    <p class="mb-1"><strong class="text-red-500">Dor:</strong> ${item.dor}</p>
+                    <p><strong class="text-blue-500">Objetivo:</strong> ${item.obj}</p>
+                </td>
+                <td class="px-6 py-4 text-gray-500 text-xs italic">${item.obs}</td>
+                <td class="px-2 py-4 text-center remove-export">
+                    <div class="flex items-center justify-center space-x-2">
+                        <button type="button" onclick="triggerEdit(${index})" class="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer" title="Editar">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button type="button" onclick="triggerSingleDelete(${index})" class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer" title="Excluir">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+            return tr;
+        }
+
+        function updateTotalCount() {
+            document.getElementById('total-count').innerText = indicatorsData.length;
+        }
+
+        // --- LÓGICA DE EXCLUSÃO (Single & Bulk) ---
+        let pendingDeleteAction = null;
+
+        function toggleConfirmModal() {
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.toggle('opacity-0');
+            modal.classList.toggle('pointer-events-none');
+            document.body.classList.toggle('modal-active');
+        }
+
+        document.getElementById('confirm-btn-action').addEventListener('click', () => {
+            if (pendingDeleteAction) {
+                pendingDeleteAction();
+                pendingDeleteAction = null;
+            }
+            toggleConfirmModal();
+        });
+
+        function triggerSingleDelete(index) {
+            document.getElementById('confirm-message').innerText = "Tem certeza que deseja excluir este indicador?";
+            pendingDeleteAction = () => {
+                // Remove 1 item no índice especificado
+                indicatorsData.splice(index, 1);
+                renderTable();
+            };
+            toggleConfirmModal();
+        }
+
+        function triggerBulkDelete() {
+            // Pega índices dos checkboxes marcados
+            const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+            if (checkboxes.length === 0) return;
+
+            // Extrai os índices (inteiros)
+            // IMPORTANTE: Mapear os data-index dos elementos selecionados
+            const indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index)).sort((a, b) => b - a); // Ordena decrescente para não quebrar a indexação durante a exclusão
+
+            document.getElementById('confirm-message').innerText = `Tem certeza que deseja excluir ${indicesToDelete.length} itens selecionados?`;
+            
+            pendingDeleteAction = () => {
+                // Filtra o array mantendo apenas os que NÃO estão na lista de exclusão
+                // Usando filter para criar um novo array de forma segura
+                const indicesSet = new Set(indicesToDelete);
+                indicatorsData = indicatorsData.filter((_, idx) => !indicesSet.has(idx));
+                renderTable();
+            };
+            toggleConfirmModal();
+        }
+
+        // --- LÓGICA DE CHECKBOXES ---
+        function toggleSelectAll(source) {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+            updateDeleteButtonState();
+        }
+
+        function updateDeleteButtonState() {
+            const count = document.querySelectorAll('.row-checkbox:checked').length;
+            const btn = document.getElementById('btnDeleteSelected');
+            
+            if(document.getElementById('selected-label-count')) 
+                document.getElementById('selected-label-count').innerText = count;
+            
+            if(document.getElementById('selectedCount')) 
+                document.getElementById('selectedCount').innerText = count;
+
+            if (count > 0) {
+                btn.classList.remove('hidden');
+                btn.classList.add('flex');
+            } else {
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+                document.getElementById('selectAll').checked = false;
+            }
+        }
+
+        // --- LÓGICA DE ADICIONAR / EDITAR (MODAL FORM) ---
+        
+        function openModal() {
+            resetForm();
+            document.getElementById('modal-title').innerText = "Novo Indicador";
+            document.getElementById('btnSave').innerText = "Salvar Indicador";
+            toggleModalDisplay(true);
+        }
+
+        function triggerEdit(index) {
+            const item = indicatorsData[index];
+            if(!item) return;
+
+            // Preenche o formulário
+            document.getElementById('editIndex').value = index;
+            document.getElementById('tipo').value = item.tipo;
+            document.getElementById('periodicidade').value = item.period;
+            document.getElementById('nome').value = item.nome;
+            document.getElementById('formula').value = item.formula;
+            document.getElementById('detalhamento').value = item.detalhe; // Detalhe agora é a descrição resumida
+            document.getElementById('fonte').value = item.fonte;
+            document.getElementById('resp_fonte').value = item.resp_fonte || ''; // Campo novo, pode vir vazio do init
+            document.getElementById('dor').value = item.dor;
+            document.getElementById('objetivo').value = item.obj;
+            document.getElementById('obs').value = item.obs;
+
+            document.getElementById('modal-title').innerText = "Editar Indicador";
+            document.getElementById('btnSave').innerText = "Atualizar";
+            
+            toggleModalDisplay(true);
+        }
+
+        function closeModal() {
+            toggleModalDisplay(false);
+            resetForm();
+        }
+
+        function toggleModalDisplay(show) {
+            const modal = document.getElementById('modal-id');
+            if (show) {
+                modal.classList.remove("opacity-0", "pointer-events-none");
+                document.body.classList.add("modal-active");
+            } else {
+                modal.classList.add("opacity-0", "pointer-events-none");
+                document.body.classList.remove("modal-active");
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('indicatorForm').reset();
+            document.getElementById('editIndex').value = "";
+        }
+
+        function saveIndicator() {
+            const editIndex = document.getElementById('editIndex').value;
+            
+            // Coletar objeto do form
+            const itemData = {
+                tipo: document.getElementById('tipo').value,
+                nome: document.getElementById('nome').value,
+                nome_en: "",
+                formula: document.getElementById('formula').value,
+                detalhe: document.getElementById('detalhamento').value,
+                fonte: document.getElementById('fonte').value,
+                resp_fonte: document.getElementById('resp_fonte').value,
+                period: document.getElementById('periodicidade').value,
+                dor: document.getElementById('dor').value,
+                obj: document.getElementById('objetivo').value,
+                obs: document.getElementById('obs').value
+            };
+
+            if (!itemData.nome) {
+                alert("O nome do indicador é obrigatório.");
+                return;
+            }
+
+            if (editIndex === "") {
+                // MODO CRIAR
+                indicatorsData.unshift(itemData);
+            } else {
+                // MODO EDITAR
+                const idx = parseInt(editIndex);
+                if (indicatorsData[idx] && indicatorsData[idx].nome_en) {
+                    itemData.nome_en = indicatorsData[idx].nome_en;
+                }
+                indicatorsData[idx] = itemData;
+            }
+
+            // Redesenha tabela e fecha
+            renderTable();
+            closeModal();
+        }
+
+        // --- LÓGICA DE DEFINIÇÕES (INFO POPUP) ---
+        function showDefinition(type) {
+            const def = definitions[type];
+            if(!def) return;
+
+            document.getElementById('def-header').className = `px-6 py-4 flex justify-between items-center text-white rounded-t-lg ${def.headerColor}`;
+            document.getElementById('def-title').innerText = def.title;
+            document.getElementById('def-desc').innerText = def.desc;
+            document.getElementById('def-analogy').innerText = def.analogy;
+
+            const ul = document.getElementById('def-examples');
+            ul.innerHTML = '';
+            def.examples.forEach(ex => {
+                const li = document.createElement('li');
+                li.innerText = ex;
+                ul.appendChild(li);
+            });
+
+            const modal = document.getElementById('definition-modal');
+            modal.classList.remove("opacity-0", "pointer-events-none");
+        }
+
+        function closeDefinition() {
+            const modal = document.getElementById('definition-modal');
+            modal.classList.add("opacity-0", "pointer-events-none");
+        }
+
+        // --- LÓGICA DE EXPORTAR EXCEL ---
+        function exportToExcel() {
+            const table = document.getElementById("indicadores-table");
+            let csv = [];
+            const BOM = "\uFEFF"; 
+
+            const headers = [];
+            const headerCells = table.querySelectorAll("thead th");
+            // Começa em i=1 (pula checkbox), vai até length-1 (pula ações)
+            for (let i = 1; i < headerCells.length - 1; i++) { 
+                headers.push('"' + headerCells[i].innerText.replace(/"/g, '""').replace(/\n/g, " ") + '"');
+            }
+            csv.push(headers.join(";")); 
+
+            // Dados (pula checkbox[0] e ações[last])
+            indicatorsData.forEach(item => {
+                const rowData = [];
+                // Mapeia os campos na ordem das colunas visíveis
+                rowData.push(item.tipo);
+                rowData.push(`${item.nome} ${item.nome_en ? '(' + item.nome_en + ')' : ''}`);
+                rowData.push(item.formula);
+                rowData.push(item.detalhe); // Descrição Resumida
+                rowData.push(`${item.fonte} | Resp: ${item.resp_fonte}`);
+                rowData.push(item.period);
+                rowData.push(`Dor: ${item.dor} | Objetivo: ${item.obj}`);
+                rowData.push(item.obs);
+
+                // Formatação final CSV
+                const csvRow = rowData.map(data => {
+                    let text = data || '';
+                    // Limpeza de quebras de linha e espaços duplos
+                    text = text.replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, " ").trim();
+                    // Escapar aspas duplas e envolver em aspas
+                    return '"' + text.replace(/"/g, '""') + '"';
+                });
+                csv.push(csvRow.join(";"));
+            });
+
+            const csvString = BOM + csv.join("\n");
+            const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            const date = new Date().toISOString().slice(0, 10);
+            link.href = URL.createObjectURL(blob);
+            link.download = `Matriz_Indicadores_TA_${date}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Atalho Teclado
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            if (evt.key === "Escape" || evt.key === "Esc") {
+                if(document.body.classList.contains('modal-active')) {
+                    closeModal();
+                    const confirmModal = document.getElementById('confirm-modal');
+                    if(!confirmModal.classList.contains('opacity-0')) toggleConfirmModal();
+                }
+                closeDefinition();
+            }
+        };
+    </script>
+</body>
+</html>
