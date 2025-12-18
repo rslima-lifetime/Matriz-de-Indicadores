@@ -1,728 +1,490 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matriz de Indicadores - Talent Acquisition</title>
+    <title>Dashboard People Analytics | MAG Seguros</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --primary: #0ea5e9;
+            --secondary: #1e293b;
+            --accent: #38bdf8;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #f1f5f9;
+            color: #1e293b;
         }
-        .table-container {
-            overflow-x: auto;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            max-height: 75vh;
+
+        h1, h2, h3, .font-display {
+            font-family: 'Urbanist', sans-serif;
         }
-        .table-container::-webkit-scrollbar {
-            height: 8px;
-            width: 8px;
+
+        .metric-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
-        .table-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-color: var(--primary);
         }
-        .table-container::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 4px;
+
+        .modal-overlay {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            transition: opacity 0.3s ease;
         }
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
+
+        .modal-container {
+            transform: scale(0.95);
+            transition: all 0.3s ease;
         }
-        .modal {
-            transition: opacity 0.25s ease;
+
+        .modal-active .modal-container {
+            transform: scale(1);
         }
-        body.modal-active {
-            overflow-x: hidden;
-            overflow-y: visible !important;
+
+        .gradient-border {
+            position: relative;
+            border-radius: 1rem;
+            background: white;
         }
-        /* Checkbox Custom Style */
-        .custom-checkbox {
-            cursor: pointer;
-            width: 1.25rem;
-            height: 1.25rem;
-            border-radius: 0.25rem;
-            border-color: #d1d5db;
-            color: #4f46e5; 
+
+        .gradient-border::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 1.1rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent), #818cf8);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        .custom-checkbox:focus {
-            ring: 2px;
-            ring-color: #6366f1;
+
+        .metric-card:hover.gradient-border::before {
+            opacity: 1;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .modal-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .modal-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
         }
     </style>
 </head>
-<body class="text-gray-800 antialiased h-screen flex flex-col">
+<body class="min-h-screen pb-20">
 
-    <!-- Header / Navbar -->
-    <header class="bg-indigo-900 text-white shadow-lg flex-none z-30">
-        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold tracking-tight">Matriz de Indicadores</h1>
-                <p class="text-indigo-200 text-sm mt-1">Talent Acquisition & Assessment de Liderança</p>
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-8 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-sky-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-sky-200">
+                    <i data-lucide="bar-chart-big" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900">Núcleo de <span class="text-sky-600">People Analytics</span></h1>
+                    <p class="text-xs text-slate-500 font-medium">Sugestões de Indicadores para a Gerência de Atração de Talentos - Luciana Rosa</p>
+                </div>
             </div>
-            <div class="mt-4 md:mt-0 flex gap-3 items-center">
-                
-                <!-- Botão Excluir Selecionados -->
-                <button id="btnDeleteSelected" type="button" onclick="triggerBulkDelete()" class="hidden bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow flex items-center transition duration-150 ease-in-out border border-red-500 animate-pulse cursor-pointer">
-                    <i class="fas fa-trash-alt mr-2"></i> Excluir (<span id="selectedCount">0</span>)
-                </button>
-
-                <!-- Botão Exportar Excel -->
-                <button type="button" onclick="exportToExcel()" class="bg-indigo-700 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded shadow flex items-center transition duration-150 ease-in-out border border-indigo-500 cursor-pointer">
-                    <i class="fas fa-file-excel mr-2"></i> Exportar
-                </button>
-                
-                <!-- Botão Novo Indicador -->
-                <button type="button" onclick="openModal()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow flex items-center transition duration-150 ease-in-out cursor-pointer">
-                    <i class="fas fa-plus mr-2"></i> Novo
-                </button>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Status da Base</p>
+                    <p class="text-sm font-semibold text-emerald-600 flex items-center gap-1">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> Atualizado Hoje
+                    </p>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow w-full max-w-[98%] mx-auto py-6 overflow-hidden flex flex-col">
-        
-        <!-- Legend Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 flex-none">
-            <!-- KPI Card -->
-            <div class="bg-white p-3 rounded-lg border-l-4 border-green-500 shadow-sm flex items-center justify-between group hover:shadow-md transition-shadow">
-                <div class="flex items-center">
-                    <div class="p-2 bg-green-100 rounded-full mr-3 text-green-600"><i class="fas fa-chart-line"></i></div>
-                    <div>
-                        <h3 class="font-bold text-gray-700 text-sm">KPI</h3>
-                        <p class="text-[10px] text-gray-500">Estratégico</p>
-                    </div>
-                </div>
-                <button onclick="showDefinition('KPI')" class="text-gray-400 hover:text-green-600 transition-colors p-2" title="O que é um KPI?">
-                    <i class="fas fa-info-circle text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Indicador Card -->
-            <div class="bg-white p-3 rounded-lg border-l-4 border-blue-500 shadow-sm flex items-center justify-between group hover:shadow-md transition-shadow">
-                <div class="flex items-center">
-                    <div class="p-2 bg-blue-100 rounded-full mr-3 text-blue-600"><i class="fas fa-chart-pie"></i></div>
-                    <div>
-                        <h3 class="font-bold text-gray-700 text-sm">Indicador</h3>
-                        <p class="text-[10px] text-gray-500">Tático</p>
-                    </div>
-                </div>
-                <button onclick="showDefinition('Indicador')" class="text-gray-400 hover:text-blue-600 transition-colors p-2" title="O que é um Indicador?">
-                    <i class="fas fa-info-circle text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Métrica Card -->
-            <div class="bg-white p-3 rounded-lg border-l-4 border-gray-500 shadow-sm flex items-center justify-between group hover:shadow-md transition-shadow">
-                <div class="flex items-center">
-                    <div class="p-2 bg-gray-100 rounded-full mr-3 text-gray-600"><i class="fas fa-ruler-combined"></i></div>
-                    <div>
-                        <h3 class="font-bold text-gray-700 text-sm">Métrica</h3>
-                        <p class="text-[10px] text-gray-500">Operacional</p>
-                    </div>
-                </div>
-                <button onclick="showDefinition('Métrica')" class="text-gray-400 hover:text-gray-600 transition-colors p-2" title="O que é uma Métrica?">
-                    <i class="fas fa-info-circle text-lg"></i>
-                </button>
-            </div>
+    <main class="max-w-7xl mx-auto px-8 mt-12">
+        <div class="mb-12 animate-fade-in">
+            <h2 class="text-3xl font-bold text-slate-900 mb-4 text-balance">Direcionadores Estratégicos de Seleção</h2>
+            <p class="text-slate-600 max-w-4xl text-lg leading-relaxed">
+                Este painel apresenta uma curadoria de indicadores fundamentais para otimizar a performance da <strong>Gerência de Atração de Talentos</strong>. 
+                Navegue pelos cards para entender como cada métrica apoia a liderança em decisões de agilidade, qualidade e alinhamento cultural, 
+                garantindo que o People Analytics seja o motor de eficiência na jornada do colaborador da MAG Seguros.
+            </p>
         </div>
 
-        <!-- Table Section -->
-        <div class="bg-white rounded-lg shadow overflow-hidden flex-grow flex flex-col">
-            <div class="table-container flex-grow">
-                <table class="min-w-full divide-y divide-gray-200 relative" id="indicadores-table">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <!-- Checkbox Column -->
-                            <th scope="col" class="px-4 py-3 text-left sticky top-0 left-0 bg-gray-50 z-20 shadow-sm border-b w-10">
-                                <input type="checkbox" id="selectAll" class="custom-checkbox" onchange="toggleSelectAll(this)">
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Tipo</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Nome do Indicador</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[200px] sticky top-0 z-10 bg-gray-50 border-b">Fórmula</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[150px] sticky top-0 z-10 bg-gray-50 border-b">Detalhamento</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Fonte / Resp.</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0 z-10 bg-gray-50 border-b">Periodicidade</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[300px] sticky top-0 z-10 bg-gray-50 border-b">Motivo (Dor) & Objetivo</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider min-w-[200px] sticky top-0 z-10 bg-gray-50 border-b">Observação</th>
-                            <th scope="col" class="px-2 py-3 sticky top-0 z-10 bg-gray-50 border-b remove-export text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200 text-sm" id="table-body">
-                        <!-- Rows populated by JS -->
-                    </tbody>
-                </table>
-            </div>
-            <div class="px-6 py-2 bg-gray-50 border-t border-gray-200 flex-none flex justify-between items-center">
-                <p class="text-xs text-gray-500">
-                    Selecionados: <span id="selected-label-count" class="font-bold text-indigo-600">0</span>
-                </p>
-                <p class="text-xs text-gray-500">
-                    Total de itens: <span id="total-count" class="font-bold">0</span>
-                </p>
-            </div>
-        </div>
+        <div id="dashboard-grid" class="space-y-16"></div>
     </main>
 
-    <!-- Modal Form (Novo / Editar) -->
-    <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50" id="modal-id">
-        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
-        <div class="modal-container bg-white w-11/12 md:max-w-4xl mx-auto rounded shadow-lg z-50 overflow-y-auto max-h-[90vh]">
-            <div class="modal-content py-4 text-left px-6">
-                <div class="flex justify-between items-center pb-3 border-b">
-                    <p class="text-2xl font-bold text-indigo-900" id="modal-title">Novo Indicador</p>
-                    <div class="modal-close cursor-pointer z-50" onclick="closeModal()">
-                        <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
-                            <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
-                        </svg>
+    <!-- Modal Template -->
+    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[95vh] overflow-hidden flex flex-col modal-container">
+            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <div class="flex items-center gap-4">
+                    <div id="modal-icon-container" class="p-3 rounded-xl text-white">
+                        <i id="modal-icon" data-lucide="activity"></i>
+                    </div>
+                    <div>
+                        <h3 id="modal-title" class="text-2xl font-bold text-slate-900 leading-tight"></h3>
+                        <p id="modal-category" class="text-xs font-bold uppercase tracking-widest text-slate-400"></p>
                     </div>
                 </div>
-                <form id="indicatorForm" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="hidden" id="editIndex" value="">
-                    
-                    <div class="col-span-1">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="tipo">Tipo</label>
-                        <select id="tipo" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                            <option value="KPI">KPI</option>
-                            <option value="Indicador">Indicador</option>
-                            <option value="Métrica">Métrica</option>
-                        </select>
-                    </div>
-                    <div class="col-span-1">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="periodicidade">Periodicidade</label>
-                        <select id="periodicidade" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                            <option value="Diário">Diário</option>
-                            <option value="Semanal">Semanal</option>
-                            <option value="Mensal" selected>Mensal</option>
-                            <option value="Trimestral">Trimestral</option>
-                            <option value="Semestral">Semestral</option>
-                            <option value="Anual">Anual</option>
-                        </select>
-                    </div>
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="nome">Nome do Indicador</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="nome" type="text" placeholder="Ex: Turnover Precoce" required>
-                    </div>
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="formula">Fórmula</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 font-mono text-sm leading-tight focus:outline-none focus:shadow-outline" id="formula" type="text" placeholder="Ex: (Saídas / Ativos) * 100">
-                    </div>
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="detalhamento">Detalhamento (Dimensões)</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="detalhamento" type="text" placeholder="Ex: Área, Gestor, Cidade, Cargo">
-                    </div>
-                    <div class="col-span-1">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="fonte">Fonte de Dados</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="fonte" type="text" placeholder="Ex: ATS (Gupy), Excel">
-                    </div>
-                    <div class="col-span-1">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="resp_fonte">Responsável pela Fonte</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="resp_fonte" type="text" placeholder="Ex: TI, Adm de Pessoal">
-                    </div>
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="dor">Motivo (A dor a resolver)</label>
-                        <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="dor" rows="2" placeholder="Qual problema esse indicador resolve?"></textarea>
-                    </div>
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="objetivo">Objetivo Estratégico</label>
-                        <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="objetivo" rows="2" placeholder="Onde queremos chegar?"></textarea>
-                    </div>
-                     <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="obs">Observação</label>
-                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="obs" type="text" placeholder="Detalhes adicionais">
-                    </div>
-                </form>
-                <div class="flex justify-end pt-4 border-t mt-4">
-                    <button onclick="closeModal()" class="px-4 py-2 bg-transparent p-3 rounded-lg text-indigo-500 hover:bg-gray-100 hover:text-indigo-400 mr-2">Cancelar</button>
-                    <button onclick="saveIndicator()" id="btnSave" class="modal-close px-4 py-2 bg-indigo-600 p-3 rounded-lg text-white hover:bg-indigo-500 font-bold shadow">Salvar Indicador</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Confirmação -->
-    <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50" id="confirm-modal">
-        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50"></div>
-        <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded shadow-lg z-50 overflow-y-auto animate-fade-in-up">
-            <div class="modal-content py-4 text-left px-6">
-                <div class="flex justify-between items-center pb-3">
-                    <p class="text-xl font-bold text-gray-900"><i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Confirmação</p>
-                    <div class="modal-close cursor-pointer z-50" onclick="toggleConfirmModal()">
-                        <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
-                            <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
-                        </svg>
-                    </div>
-                </div>
-                <p id="confirm-message" class="text-gray-700 font-medium mb-6 mt-2">Tem certeza que deseja excluir?</p>
-                <div class="flex justify-end pt-2">
-                    <button onclick="toggleConfirmModal()" class="px-4 py-2 bg-gray-100 p-3 rounded-lg text-gray-600 hover:bg-gray-200 hover:text-gray-800 mr-2 font-medium">Cancelar</button>
-                    <button id="confirm-btn-action" class="px-4 py-2 bg-red-600 p-3 rounded-lg text-white hover:bg-red-700 font-bold shadow-md transition-colors">Confirmar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Definições -->
-    <div class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50" id="definition-modal">
-        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-60" onclick="closeDefinition()"></div>
-        <div class="modal-container bg-white w-11/12 md:max-w-lg mx-auto rounded-lg shadow-2xl z-50 animate-fade-in-down overflow-hidden">
-            <div id="def-header" class="px-6 py-4 flex justify-between items-center border-b border-gray-100">
-                <h3 id="def-title" class="font-bold text-xl"></h3>
-                <button onclick="closeDefinition()" class="text-white hover:text-gray-200 focus:outline-none">
-                    <i class="fas fa-times"></i>
+                <button onclick="closeModal()" class="w-10 h-10 rounded-full hover:bg-slate-200 flex items-center justify-center transition-colors">
+                    <i data-lucide="x" class="text-slate-500"></i>
                 </button>
             </div>
-            <div class="px-6 py-6 text-gray-700">
-                <div class="mb-4">
-                    <h4 class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-1">Definição</h4>
-                    <p id="def-desc" class="text-base leading-relaxed"></p>
+
+            <div class="flex-1 overflow-y-auto p-8 modal-scroll">
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
+                    <div class="lg:col-span-3 space-y-10">
+                        <div class="bg-slate-900 rounded-2xl p-6 shadow-inner relative overflow-hidden group">
+                            <div class="flex justify-between items-center mb-6">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-tighter flex items-center gap-2">
+                                    <i data-lucide="layout-template" class="w-3 h-3"></i> Representação do Case Real
+                                </span>
+                                <span class="px-2 py-1 bg-sky-500/20 text-sky-400 text-[10px] font-bold rounded uppercase">Resultado Prático</span>
+                            </div>
+                            <div class="h-64 flex items-center justify-center">
+                                <canvas id="modalChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-3">
+                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i data-lucide="target" class="w-4 h-4 text-sky-500"></i> Por que é Vital?
+                                </h4>
+                                <p id="modal-importance" class="text-slate-700 leading-relaxed text-sm"></p>
+                            </div>
+                            <div class="space-y-3">
+                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500"></i> Case de Aplicação
+                                </h4>
+                                <div class="bg-amber-50/50 border-l-4 border-amber-400 p-4 rounded-r-xl">
+                                    <p id="modal-case" class="text-slate-700 italic text-sm leading-relaxed"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm sticky top-0">
+                            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                                <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="settings-2" class="w-4 h-4"></i> Especificações Técnicas
+                                </h4>
+                            </div>
+                            <div class="divide-y divide-slate-100">
+                                <div class="p-5 flex gap-4">
+                                    <div class="w-10 h-10 rounded-lg bg-sky-50 flex items-center justify-center shrink-0">
+                                        <i data-lucide="calculator" class="w-5 h-5 text-sky-600"></i>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Fórmula / Base</p>
+                                        <p id="modal-formula" class="text-sm font-medium text-slate-700"></p>
+                                    </div>
+                                </div>
+                                <div class="p-5 flex gap-4">
+                                    <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+                                        <i data-lucide="database" class="w-5 h-5 text-indigo-600"></i>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Fonte de Dados</p>
+                                        <p id="modal-source" class="text-sm font-medium text-slate-700"></p>
+                                    </div>
+                                </div>
+                                <div class="p-5 flex gap-4">
+                                    <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
+                                        <i data-lucide="calendar" class="w-5 h-5 text-emerald-600"></i>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Frequência</p>
+                                        <p id="modal-frequency" class="text-sm font-bold text-slate-700"></p>
+                                    </div>
+                                </div>
+                                <div class="p-5 flex gap-4 bg-sky-50/30">
+                                    <div class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0">
+                                        <i data-lucide="flag" class="w-5 h-5 text-sky-600"></i>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="text-[10px] font-bold text-sky-500 uppercase tracking-widest">Meta Sugerida</p>
+                                        <p id="modal-target" class="text-sm font-black text-slate-900"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-4 bg-gray-50 p-3 rounded-md border border-gray-200">
-                    <h4 class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-1">Analogia Prática</h4>
-                    <p id="def-analogy" class="text-sm italic"></p>
-                </div>
-                <div>
-                    <h4 class="text-sm font-bold uppercase tracking-wide text-gray-400 mb-1">Exemplos</h4>
-                    <ul id="def-examples" class="list-disc list-inside text-sm space-y-1"></ul>
-                </div>
-            </div>
-            <div class="bg-gray-50 px-6 py-3 flex justify-end">
-                <button onclick="closeDefinition()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm">
-                    Entendi
-                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // Chave para armazenamento de sessão (trocado de localStorage para sessionStorage)
-        const STORAGE_KEY = 'matriz_indicadores_data';
-
-        // Dados padrão (mantido como referência, mas não usado para inicializar)
-        const DEFAULT_INDICATORS_DATA = [
-            { tipo: "KPI", nome: "Tempo de Fechamento", nome_en: "Time to Fill", formula: "Média(Data Fechamento - Data Abertura)", detalhe: "Diretoria, Cargo, Recrutador", fonte: "ATS (Gupy)", resp_fonte: "Admin ATS", period: "Mensal", dor: "Demora em repor posições críticas.", obj: "Otimizar velocidade sem perder qualidade.", obs: "Excluir vagas canceladas." },
-            { tipo: "KPI", nome: "Taxa de Aceite de Proposta", nome_en: "Offer Acceptance Rate", formula: "(Ofertas Aceitas / Total Ofertas) * 100", detalhe: "Cargo, Área, Faixa Salarial", fonte: "ATS / Planilha", resp_fonte: "Recrutadores", period: "Mensal", dor: "Problemas de competitividade salarial.", obj: "Ajustar pacote de benefícios.", obs: "Se baixo, cruzar com pesquisa salarial." },
-            { tipo: "KPI", nome: "Turnover Precoce", nome_en: "Early Turnover", formula: "(Desligados < 90 dias / Contratados) * 100", detalhe: "Gestor, Área, Fonte, BP", fonte: "HCM (ADP/Totvs)", resp_fonte: "DP / Folha", period: "Trimestral", dor: "Erro na contratação ou falha no onboarding.", obj: "Validar qualidade da seleção.", obs: "Monitorar janelas de 6 e 12 meses." },
-            { tipo: "KPI", nome: "Custo por Contratação", nome_en: "Cost per Hire", formula: "(Custos Internos + Ext) / Nº Contratações", detalhe: "Área, Nível Hierárquico", fonte: "ERP + ATS", resp_fonte: "Financeiro", period: "Trimestral", dor: "Orçamento estourado / ROI desconhecido.", obj: "Otimizar budget em fontes eficazes.", obs: "Incluir Headhunters e licenças." },
-            { tipo: "KPI", nome: "SLA de Triagem", nome_en: "", formula: "Média(Data Entrevista - Data Candidatura)", detalhe: "Recrutador, Nível da Vaga", fonte: "ATS", resp_fonte: "Admin ATS", period: "Semanal", dor: "Bons candidatos desistem se demorar.", obj: "Agilidade na experiência do candidato.", obs: "Crítico para vagas de tecnologia." },
-            { tipo: "Métrica", nome: "Eficiência do Funil", nome_en: "Pass-through Rate", formula: "(Candidatos Etapa X / Etapa Anterior) %", detalhe: "Etapa, Recrutador, Vaga", fonte: "ATS", resp_fonte: "Admin ATS", period: "Semanal", dor: "Triagem ineficiente ou gestor exigente.", obj: "Identificar gargalos no funil.", obs: "Verificar reprovação por gestor." },
-            { tipo: "Indicador", nome: "Satisfação do Gestor", nome_en: "HM Satisfaction", formula: "Média nota (1-5) ou NPS", detalhe: "Gestor, Diretoria, Recrutador", fonte: "Forms / ATS", resp_fonte: "Time P&A", period: "Mensal", dor: "Desalinhamento RH x Negócio.", obj: "Parceria consultiva.", obs: "Enviar 7 dias pós-fechamento." },
-            { tipo: "Indicador", nome: "Qualidade da Origem", nome_en: "Source Quality", formula: "(High Performers / Total por Fonte)", detalhe: "Fonte (LinkedIn, Gupy)", fonte: "ATS + Aval. Desemp.", resp_fonte: "P&A / DHO", period: "Semestral", dor: "Gasto em fontes de baixa qualidade.", obj: "Otimizar investimento.", obs: "Cruzar com avaliação de 90 dias." },
-            { tipo: "Indicador", nome: "Aproveitamento Interno", nome_en: "Liderança", formula: "(Vagas Internas / Total Liderança) %", detalhe: "Diretoria, Nível", fonte: "ATS / HCM", resp_fonte: "DHO / P&A", period: "Mensal", dor: "Pipeline de sucessão fraco.", obj: "Medir eficácia de DHO.", obs: "Rever Trainee/Sucessão." },
-            { tipo: "Métrica", nome: "Diversidade no Shortlist", nome_en: "", formula: "% grupos sub-representados etapa final", detalhe: "Gênero, Raça, PcD", fonte: "ATS", resp_fonte: "Admin ATS", period: "Mensal", dor: "Contratações homogêneas.", obj: "Representatividade na boca do funil.", obs: "Foco na etapa final." },
-            { tipo: "Indicador", nome: "Aderência Comportamental", nome_en: "Fit Cultural", formula: "% match perfil vaga vs candidato", detalhe: "Cargo, Área, BP", fonte: "Plat. Assessment", resp_fonte: "Consultoria", period: "Mensal", dor: "Falha no fit comportamental.", obj: "Assertividade cultural.", obs: "Crítico para Liderança." },
-            { tipo: "Métrica", nome: "Vagas Abertas vs Fechadas", nome_en: "Volume", formula: "Contagem simples", detalhe: "Status, Recrutador", fonte: "ATS", resp_fonte: "Admin ATS", period: "Semanal", dor: "Backlog acumulado.", obj: "Balanceamento de carga.", obs: "Justificativa para novas contratações." },
-            { tipo: "Métrica", nome: "Motivos de Declínio", nome_en: "", formula: "Contagem por categoria", detalhe: "Cargo, Concorrente", fonte: "ATS", resp_fonte: "Recrutadores", period: "Trimestral", dor: "Perda para concorrência.", obj: "Dados para Remuneração.", obs: "Campo estruturado." }
+        const sections = [
+            {
+                title: "Retenção e Estabilidade",
+                color: "sky",
+                icon: "shield-check",
+                metrics: [
+                    {
+                        id: "ret-90",
+                        name: "Retenção 90 dias",
+                        formula: "(Contratados permanentes > 90 dias / Total Admissões)",
+                        source: "Base Efetivo / LG / SharePoint",
+                        frequency: "Mensal",
+                        target: "> 95% de Retenção",
+                        importance: "Mede o sucesso da integração e o alinhamento de expectativas.",
+                        case: "Identificamos que 15% das saídas ocorriam no 2º mês, mesmo com o programa de Padrinhos ativo. Ao reformularmos o projeto, focando na capacitação técnica e comportamental dos 'Buddies' selecionados, a retenção inicial saltou para 98%.",
+                        chartType: 'doughnut',
+                        chartData: [98, 2], // Refletindo o salto para 98%
+                        labels: ['Retidos', 'Turnover']
+                    },
+                    {
+                        id: "ret-6m",
+                        name: "Retenção 6 meses",
+                        formula: "(Ativos com > 6 meses / Total admissões há 6 meses)",
+                        source: "Base de Dados RH / DataLake",
+                        frequency: "Trimestral",
+                        target: "> 85% de Retenção",
+                        importance: "Valida a 'curva de sobrevivência' e se o treinamento inicial foi eficaz.",
+                        case: "Em áreas comerciais, percebemos que a curva de aprendizado era de 4 meses. Ajustamos a régua de metas do primeiro semestre e a retenção saltou 20%.",
+                        chartType: 'line',
+                        chartData: [72, 75, 78, 88, 92, 91], // Mostrando a curva de subida
+                        labels: ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6']
+                    },
+                    {
+                        id: "qualidade",
+                        name: "Qualidade da Contratação",
+                        formula: "(Desempenho Ciclo Gente + Fit Cultural Score) / 2",
+                        source: "Pesquisa Gestor / Ciclo de Gente",
+                        frequency: "Semestral",
+                        target: "Score > 80/100",
+                        importance: "O KPI 'rei' da Atração. Mede quem realmente performa e reforça a cultura.",
+                        case: "Cruzamos dados e vimos que candidatos vindos de 'Indicação Interna' tinham nota de desempenho 30% superior aos de canais tradicionais.",
+                        chartType: 'bar',
+                        chartData: [65, 95], // Comparando canais comuns (65) vs indicação (95) -> ~30% diff
+                        labels: ['Canais Tradicionais', 'Indicação Interna']
+                    }
+                ]
+            },
+            {
+                title: "Marca e Atração",
+                color: "indigo",
+                icon: "megaphone",
+                metrics: [
+                    {
+                        id: "reputacao",
+                        name: "Índice de Reputação",
+                        formula: "Média Ponderada (eNPS + Glassdoor + Indeed)",
+                        source: "Social Listening / Glassdoor",
+                        frequency: "Trimestral",
+                        target: "Nota > 4.2 estrelas",
+                        importance: "Uma marca forte atrai talentos passivos qualificados.",
+                        case: "Uma campanha focada em 'Employee Experience' no LinkedIn elevou nossa nota no Glassdoor de 3.8 para 4.2 em menos de um ano.",
+                        chartType: 'line',
+                        chartData: [3.8, 3.85, 3.9, 4.05, 4.15, 4.2], // Crescimento real do case
+                        labels: ['Trim 1', 'Trim 2', 'Trim 3', 'Trim 4', 'Trim 5', 'Trim 6']
+                    },
+                    {
+                        id: "conv-funil",
+                        name: "Conversão por Etapa",
+                        formula: "(Candidatos Aprovados / Candidatos Inscritos na Etapa)",
+                        source: "Gupy / ATS",
+                        frequency: "Mensal",
+                        target: "Otimização de Gargalos",
+                        importance: "Identifica fricções no processo seletivo.",
+                        case: "Ao reduzir o processo de 6 para 3 etapas em vagas operacionais, a taxa de desistência de candidatos caiu 45%.",
+                        chartType: 'bar',
+                        chartData: [55, 100], // Taxa de retenção no funil antes (55%) vs depois (100% de melhoria)
+                        labels: ['Processo 6 Etapas', 'Processo 3 Etapas (Atual)']
+                    },
+                    {
+                        id: "cand-vaga",
+                        name: "Candidatos por Vaga",
+                        formula: "Total de inscritos / Requisições abertas",
+                        source: "Gupy (Analytics)",
+                        frequency: "Mensal",
+                        target: "Mínimo 50 p/ vaga",
+                        importance: "Mede o alcance e atratividade da nossa EVP.",
+                        case: "Vagas com selo 'Melhores Empresas para Trabalhar' recebem 3x mais currículos qualificados que as demais.",
+                        chartType: 'bar',
+                        chartData: [45, 135], // 3x mais currículos conforme o case
+                        labels: ['Vaga Sem Selo', 'Vaga Com Selo GPTW']
+                    }
+                ]
+            },
+            {
+                title: "Eficiência e Operação",
+                color: "rose",
+                icon: "zap",
+                metrics: [
+                    {
+                        id: "time-hire",
+                        name: "Time to Hire",
+                        formula: "Data Aceite - Data Abertura da Requisição",
+                        source: "Gupy / Workflow Aprovações",
+                        frequency: "Mensal",
+                        target: "SLA < 35 dias",
+                        importance: "Custo da 'Cadeira Vazia'. Cada dia é perda para a operação.",
+                        case: "Reduzimos o SLA de 45 para 28 dias automatizando a triagem inicial com IA, liberando o recrutador para o hunting estratégico.",
+                        chartType: 'line',
+                        chartData: [45, 42, 38, 33, 30, 28], // Queda real conforme o case
+                        labels: ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6']
+                    },
+                    {
+                        id: "diversidade",
+                        name: "Taxa de Diversidade",
+                        formula: "% Grupos Minoritários (Pipeline vs Contratados)",
+                        source: "Censo Interno / Gupy",
+                        frequency: "Trimestral",
+                        target: "> 30% Diversidade",
+                        importance: "Garante inovação e alinhamento com as metas globais de ESG.",
+                        case: "Implementamos a 'Shortlist Cega' e aumentamos em 25% a contratação de lideranças femininas em TI.",
+                        chartType: 'bar',
+                        chartData: [20, 25], // 25% de aumento conforme o case
+                        labels: ['Antes da Shortlist Cega', 'Após Implementação']
+                    },
+                    {
+                        id: "ramp-up",
+                        name: "Ramp up / Produtividade",
+                        formula: "Dias até atingir 100% da Meta Plena",
+                        source: "SGV / Ciclo de Gente",
+                        frequency: "Semestral",
+                        target: "Redução de 15% no ciclo",
+                        importance: "Calcula o ROI da contratação e o ponto de breakeven.",
+                        case: "Novos corretores que passam pela trilha 'MAG Academy' atingem a meta média 2 meses antes do grupo de controle.",
+                        chartType: 'bar',
+                        chartData: [180, 120], // 6 meses (180 dias) vs 4 meses (120 dias)
+                        labels: ['Grupo Controle', 'Grupo MAG Academy']
+                    }
+                ]
+            }
         ];
 
-        // Variável global que armazena os dados.
-        let indicatorsData = []; 
+        let currentChart = null;
 
-        // --- LÓGICA DE PERSISTÊNCIA (sessionStorage) ---
-        function saveIndicators() {
-            try {
-                // Só salva se houver dados
-                if (indicatorsData.length > 0) {
-                    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(indicatorsData));
-                    console.log(`[SessionStorage] SUCESSO: Dados salvos. Total de itens: ${indicatorsData.length}.`);
-                } else {
-                    // Limpa o storage se a lista estiver vazia (opcional, mas bom para limpeza)
-                    sessionStorage.removeItem(STORAGE_KEY);
-                    console.log("[SessionStorage] INFO: Lista vazia. Chave removida do storage.");
-                }
-            } catch (error) {
-                console.error("[SessionStorage] ERRO ao salvar dados:", error);
-            }
-        }
-
-        function loadIndicators() {
-            try {
-                const storedData = sessionStorage.getItem(STORAGE_KEY);
-                if (storedData) {
-                    indicatorsData = JSON.parse(storedData);
-                    console.log(`[SessionStorage] SUCESSO: Dados carregados. Total de itens: ${indicatorsData.length}.`, indicatorsData);
-                } else {
-                    // Inicializa vazio se não houver dados salvos
-                    indicatorsData = [];
-                    console.log("[SessionStorage] INFO: Nenhuma dado encontrado. Inicializando matriz vazia.");
-                }
-            } catch (error) {
-                console.error("[SessionStorage] ERRO ao carregar dados, inicializando vazio:", error);
-                indicatorsData = [];
-            }
-        }
-        
-        // Definições estáticas (não precisam ser salvas)
-        const definitions = {
-            'KPI': {
-                title: 'Key Performance Indicator (KPI)',
-                headerColor: 'bg-green-600',
-                desc: 'É o "Termômetro do Sucesso". Indicadores-chave de desempenho que estão diretamente ligados aos objetivos estratégicos da empresa. Se o KPI vai mal, a estratégia da empresa está em risco.',
-                analogy: 'Em um carro, o KPI é o Velocímetro: diz se você está na velocidade certa para chegar ao destino a tempo.',
-                examples: ['Turnover Precoce (Custo/Qualidade)', 'Time to Fill (Agilidade/Produtividade)', 'NPS do Gestor (Qualidade do Serviço)']
-            },
-            'Indicador': {
-                title: 'Indicador Tático',
-                headerColor: 'bg-blue-600',
-                desc: 'É o "Painel de Controle". Medidas que monitoram a performance de processos específicos ou departamentos. Eles explicam o "porquê" um KPI está bom ou ruim.',
-                analogy: 'Em um carro, é o medidor de Óleo ou Temperatura: mostra a saúde de uma parte específica do motor que pode parar o carro se falhar.',
-                examples: ['Satisfação do Gestor', 'Qualidade da Origem (Source Quality)', 'Taxa de Aproveitamento Interno']
-            },
-            'Métrica': {
-                title: 'Métrica Operacional',
-                headerColor: 'bg-gray-600',
-                desc: 'É a "Matéria-Prima". Dados brutos ou contagens simples que servem de base para construir indicadores. Sozinhas, não dizem se algo é bom ou ruim, apenas o volume.',
-                analogy: 'Em um carro, é o Odômetro (km rodados): diz quanto você andou, mas não se você dirigiu bem ou mal.',
-                examples: ['Número de Vagas Abertas', 'Total de Currículos Triados', 'Motivos de Declínio']
-            }
-        };
-
-        // --- INICIALIZAÇÃO ---
-        document.addEventListener('DOMContentLoaded', () => {
-            loadIndicators(); // 1. Carrega os dados (vazio ou salvo)
-            renderTable();    // 2. Renderiza a tabela
-        });
-
-        // --- LÓGICA DE RENDERIZAÇÃO (CORE) ---
-        // Toda vez que os dados mudam, redesenhamos a tabela.
-        function renderTable() {
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '';
-            
-            indicatorsData.forEach((item, index) => {
-                const row = createRow(item, index);
-                tbody.appendChild(row);
+        function renderDashboard() {
+            const grid = document.getElementById('dashboard-grid');
+            grid.innerHTML = '';
+            sections.forEach((section, sIdx) => {
+                const sectionHtml = `
+                    <div class="animate-fade-in" style="animation-delay: ${sIdx * 150}ms">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="p-2 bg-${section.color}-500 text-white rounded-lg shadow-md">
+                                <i data-lucide="${section.icon}" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-slate-800">${section.title}</h3>
+                            <div class="h-px bg-slate-200 flex-1 ml-4"></div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            ${section.metrics.map(metric => `
+                                <div onclick="openModal('${metric.id}')" class="metric-card gradient-border p-8 rounded-2xl cursor-pointer shadow-sm">
+                                    <div class="flex justify-between items-start mb-6">
+                                        <div class="p-2 bg-${section.color}-50 rounded-lg">
+                                            <i data-lucide="trending-up" class="w-5 h-5 text-${section.color}-600"></i>
+                                        </div>
+                                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-1 rounded">KPI Ativo</span>
+                                    </div>
+                                    <h4 class="text-xl font-bold text-slate-900 mb-2">${metric.name}</h4>
+                                    <p class="text-sm text-slate-500 line-clamp-2 mb-6">${metric.importance}</p>
+                                    <div class="flex items-center gap-2 text-sky-600 font-bold text-xs uppercase tracking-wider group-hover:gap-4 transition-all">
+                                        Explorar Detalhes <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += sectionHtml;
             });
-            
-            updateTotalCount();
-            
-            // Reseta botões de ação global
-            document.getElementById('selectAll').checked = false;
-            updateDeleteButtonState();
+            lucide.createIcons();
         }
 
-        function createRow(item, index) {
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-gray-50 transition-colors group";
-            
-            let badgeClass = "bg-gray-100 text-gray-800";
-            if (item.tipo === 'KPI') badgeClass = "bg-green-100 text-green-800";
-            else if (item.tipo === 'Indicador') badgeClass = "bg-blue-100 text-blue-800";
-
-            let pColor = "gray";
-            if (item.period === 'Semanal') pColor = "green";
-            if (item.period === 'Mensal') pColor = "indigo";
-            if (item.period === 'Trimestral') pColor = "yellow";
-            if (item.period === 'Semestral') pColor = "purple";
-            if (item.period === 'Anual') pColor = "red";
-
-            tr.innerHTML = `
-                <td class="px-4 py-4 whitespace-nowrap sticky left-0 bg-white group-hover:bg-gray-50 z-10 border-r border-gray-100 text-center">
-                    <input type="checkbox" class="row-checkbox custom-checkbox" data-index="${index}" onchange="updateDeleteButtonState()">
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${badgeClass}">${item.tipo}</span>
-                </td>
-                <td class="px-6 py-4 font-medium text-gray-900">
-                    ${item.nome}
-                    ${item.nome_en ? `<br><span class="text-xs text-gray-500">(${item.nome_en})</span>` : ''}
-                </td>
-                <td class="px-6 py-4 text-gray-600 font-mono text-xs bg-gray-50 rounded mx-2 border border-gray-100">${item.formula}</td>
-                <td class="px-6 py-4 text-gray-600">${item.detalhe}</td>
-                <td class="px-6 py-4 text-gray-600">
-                    <div class="flex flex-col gap-1">
-                        <span class="text-xs font-semibold"><i class="fas fa-database mr-1"></i> ${item.fonte}</span>
-                        <span class="text-xs text-gray-500">Resp: ${item.resp_fonte}</span>
-                    </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-600">
-                    <span class="bg-${pColor}-50 text-${pColor}-700 py-1 px-2 rounded text-xs border border-${pColor}-200">${item.period}</span>
-                </td>
-                <td class="px-6 py-4 text-gray-600">
-                    <p class="mb-1"><strong class="text-red-500">Dor:</strong> ${item.dor}</p>
-                    <p><strong class="text-blue-500">Objetivo:</strong> ${item.obj}</p>
-                </td>
-                <td class="px-6 py-4 text-gray-500 text-xs italic">${item.obs}</td>
-                <td class="px-2 py-4 text-center remove-export">
-                    <div class="flex items-center justify-center space-x-2">
-                        <button type="button" onclick="triggerEdit(${index})" class="text-blue-400 hover:text-blue-600 transition-colors cursor-pointer" title="Editar">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                        <button type="button" onclick="triggerSingleDelete(${index})" class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer" title="Excluir">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </td>
-            `;
-            return tr;
+        function openModal(metricId) {
+            const metric = sections.flatMap(s => s.metrics).find(m => m.id === metricId);
+            const section = sections.find(s => s.metrics.some(m => m.id === metricId));
+            const modal = document.getElementById('modal');
+            document.getElementById('modal-title').innerText = metric.name;
+            document.getElementById('modal-category').innerText = section.title;
+            document.getElementById('modal-formula').innerText = metric.formula;
+            document.getElementById('modal-source').innerText = metric.source;
+            document.getElementById('modal-importance').innerText = metric.importance;
+            document.getElementById('modal-case').innerText = metric.case;
+            document.getElementById('modal-frequency').innerText = metric.frequency;
+            document.getElementById('modal-target').innerText = metric.target;
+            const iconContainer = document.getElementById('modal-icon-container');
+            iconContainer.className = `p-3 rounded-xl text-white bg-${section.color}-500 shadow-lg shadow-${section.color}-200`;
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('modal-active'), 10);
+            document.body.style.overflow = 'hidden';
+            createChart(metric);
+            lucide.createIcons();
         }
 
-        function updateTotalCount() {
-            document.getElementById('total-count').innerText = indicatorsData.length;
-        }
-
-        // --- LÓGICA DE EXCLUSÃO (Single & Bulk) ---
-        let pendingDeleteAction = null;
-
-        function toggleConfirmModal() {
-            const modal = document.getElementById('confirm-modal');
-            modal.classList.toggle('opacity-0');
-            modal.classList.toggle('pointer-events-none');
-            document.body.classList.toggle('modal-active');
-        }
-
-        document.getElementById('confirm-btn-action').addEventListener('click', () => {
-            if (pendingDeleteAction) {
-                pendingDeleteAction();
-                pendingDeleteAction = null;
-            }
-            toggleConfirmModal();
-        });
-
-        function triggerSingleDelete(index) {
-            document.getElementById('confirm-message').innerText = "Tem certeza que deseja excluir este indicador?";
-            pendingDeleteAction = () => {
-                // Remove 1 item no índice especificado
-                indicatorsData.splice(index, 1);
-                saveIndicators(); // Salva no sessionStorage
-                renderTable();
+        function createChart(metric) {
+            if (currentChart) currentChart.destroy();
+            const ctx = document.getElementById('modalChart').getContext('2d');
+            const color = '#38bdf8';
+            const options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { 
+                        display: metric.chartType === 'doughnut' || (metric.chartType === 'bar' && metric.id === 'qualidade'),
+                        labels: { color: '#94a3b8', font: { size: 10, weight: 'bold' } }
+                    },
+                    tooltip: { backgroundColor: '#1e293b' }
+                }
             };
-            toggleConfirmModal();
-        }
-
-        function triggerBulkDelete() {
-            // Pega índices dos checkboxes marcados
-            const checkboxes = document.querySelectorAll('.row-checkbox:checked');
-            if (checkboxes.length === 0) return;
-
-            // Extrai os índices (inteiros)
-            const indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
-
-            document.getElementById('confirm-message').innerText = `Tem certeza que deseja excluir ${indicesToDelete.length} itens selecionados?`;
-            
-            pendingDeleteAction = () => {
-                // Filtra o array mantendo apenas os que NÃO estão na lista de exclusão
-                // filter cria um novo array
-                indicatorsData = indicatorsData.filter((_, idx) => !indicesToDelete.includes(idx));
-                saveIndicators(); // Salva no sessionStorage
-                renderTable();
-            };
-            toggleConfirmModal();
-        }
-
-        // --- LÓGICA DE CHECKBOXES ---
-        function toggleSelectAll(source) {
-            const checkboxes = document.querySelectorAll('.row-checkbox');
-            checkboxes.forEach(cb => cb.checked = source.checked);
-            updateDeleteButtonState();
-        }
-
-        function updateDeleteButtonState() {
-            const count = document.querySelectorAll('.row-checkbox:checked').length;
-            const btn = document.getElementById('btnDeleteSelected');
-            
-            if(document.getElementById('selected-label-count')) 
-                document.getElementById('selected-label-count').innerText = count;
-            
-            if(document.getElementById('selectedCount')) 
-                document.getElementById('selectedCount').innerText = count;
-
-            if (count > 0) {
-                btn.classList.remove('hidden');
-                btn.classList.add('flex');
-            } else {
-                btn.classList.add('hidden');
-                btn.classList.remove('flex');
-                document.getElementById('selectAll').checked = false;
+            if (metric.chartType !== 'doughnut' && metric.chartType !== 'radar') {
+                options.scales = {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+                };
             }
-        }
-
-        // --- LÓGICA DE ADICIONAR / EDITAR (MODAL FORM) ---
-        
-        // Abre modal para NOVO item
-        function openModal() {
-            resetForm();
-            document.getElementById('modal-title').innerText = "Novo Indicador";
-            document.getElementById('btnSave').innerText = "Salvar Indicador";
-            toggleModalDisplay(true);
-        }
-
-        // Abre modal para EDITAR item existente
-        function triggerEdit(index) {
-            const item = indicatorsData[index];
-            if(!item) return;
-
-            // Preenche o formulário
-            document.getElementById('editIndex').value = index;
-            document.getElementById('tipo').value = item.tipo;
-            document.getElementById('periodicidade').value = item.period;
-            document.getElementById('nome').value = item.nome;
-            document.getElementById('formula').value = item.formula;
-            document.getElementById('detalhamento').value = item.detalhe;
-            document.getElementById('fonte').value = item.fonte;
-            document.getElementById('resp_fonte').value = item.resp_fonte;
-            document.getElementById('dor').value = item.dor;
-            document.getElementById('objetivo').value = item.obj;
-            document.getElementById('obs').value = item.obs;
-
-            document.getElementById('modal-title').innerText = "Editar Indicador";
-            document.getElementById('btnSave').innerText = "Atualizar";
-            
-            toggleModalDisplay(true);
+            const config = {
+                type: metric.chartType,
+                data: {
+                    labels: metric.labels,
+                    datasets: [{
+                        label: metric.name,
+                        data: metric.chartData,
+                        backgroundColor: metric.chartType === 'doughnut' ? [color, '#1e293b'] : (metric.chartType === 'bar' ? ['#64748b', color] : `${color}33`),
+                        borderColor: color,
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: options
+            };
+            currentChart = new Chart(ctx, config);
         }
 
         function closeModal() {
-            toggleModalDisplay(false);
-            resetForm();
+            const modal = document.getElementById('modal');
+            modal.classList.remove('modal-active');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+            document.body.style.overflow = 'auto';
         }
 
-        function toggleModalDisplay(show) {
-            const modal = document.getElementById('modal-id');
-            if (show) {
-                modal.classList.remove("opacity-0", "pointer-events-none");
-                document.body.classList.add("modal-active");
-            } else {
-                modal.classList.add("opacity-0", "pointer-events-none");
-                document.body.classList.remove("modal-active");
-            }
-        }
-
-        function resetForm() {
-            document.getElementById('indicatorForm').reset();
-            document.getElementById('editIndex').value = "";
-        }
-
-        function saveIndicator() {
-            const editIndex = document.getElementById('editIndex').value;
-            
-            // Coletar objeto do form
-            const itemData = {
-                tipo: document.getElementById('tipo').value,
-                nome: document.getElementById('nome').value,
-                nome_en: "", // Não editável no form simplificado
-                formula: document.getElementById('formula').value,
-                detalhe: document.getElementById('detalhamento').value,
-                fonte: document.getElementById('fonte').value,
-                resp_fonte: document.getElementById('resp_fonte').value,
-                period: document.getElementById('periodicidade').value,
-                dor: document.getElementById('dor').value,
-                obj: document.getElementById('objetivo').value,
-                obs: document.getElementById('obs').value
-            };
-
-            if (!itemData.nome) {
-                // Não usamos alert(), apenas para demonstração de erro simples:
-                console.error("O nome do indicador é obrigatório."); 
-                return;
-            }
-
-            if (editIndex === "") {
-                // MODO CRIAR
-                indicatorsData.unshift(itemData); // Adiciona no topo
-                console.log("[Ação CRUD] Indicador criado. Chamando saveIndicators...");
-            } else {
-                // MODO EDITAR
-                const idx = parseInt(editIndex);
-                // Preserva nome em inglês se existir, pois não está no form
-                if (indicatorsData[idx] && indicatorsData[idx].nome_en) {
-                    itemData.nome_en = indicatorsData[idx].nome_en;
-                }
-                indicatorsData[idx] = itemData;
-                 console.log("[Ação CRUD] Indicador editado. Chamando saveIndicators...");
-            }
-
-            saveIndicators(); // Salva no sessionStorage
-
-            // Redesenha tabela e fecha
-            renderTable();
-            closeModal();
-        }
-
-        // --- LÓGICA DE DEFINIÇÕES (INFO POPUP) ---
-        function showDefinition(type) {
-            const def = definitions[type];
-            if(!def) return;
-
-            document.getElementById('def-header').className = `px-6 py-4 flex justify-between items-center text-white rounded-t-lg ${def.headerColor}`;
-            document.getElementById('def-title').innerText = def.title;
-            document.getElementById('def-desc').innerText = def.desc;
-            document.getElementById('def-analogy').innerText = def.analogy;
-
-            const ul = document.getElementById('def-examples');
-            ul.innerHTML = '';
-            def.examples.forEach(ex => {
-                const li = document.createElement('li');
-                li.innerText = ex;
-                ul.appendChild(li);
-            });
-
-            const modal = document.getElementById('definition-modal');
-            modal.classList.remove("opacity-0", "pointer-events-none");
-        }
-
-        function closeDefinition() {
-            const modal = document.getElementById('definition-modal');
-            modal.classList.add("opacity-0", "pointer-events-none");
-        }
-
-        // --- LÓGICA DE EXPORTAR EXCEL ---
-        function exportToExcel() {
-            const table = document.getElementById("indicadores-table");
-            let csv = [];
-            const BOM = "\uFEFF"; 
-
-            // Header (pula checkbox[0] e ações[last])
-            const headers = [];
-            const headerCells = table.querySelectorAll("thead th");
-            for (let i = 1; i < headerCells.length - 1; i++) { 
-                headers.push('"' + headerCells[i].innerText.replace(/"/g, '""').replace(/\n/g, " ") + '"');
-            }
-            csv.push(headers.join(";")); 
-
-            // Dados (pula checkbox[0] e ações[last])
-            const rows = table.querySelectorAll("tbody tr");
-            rows.forEach(row => {
-                const rowData = [];
-                const cells = row.querySelectorAll("td");
-                for (let i = 1; i < cells.length - 1; i++) {
-                    let text = cells[i].innerText;
-                    text = text.replace(/(\r\n|\n|\r)/gm, " "); 
-                    text = text.replace(/\s+/g, " ").trim(); 
-                    if(i === 5) text = text.replace("Resp:", " | Resp:"); 
-                    if(i === 7) text = text.replace("Objetivo:", " | Objetivo:");
-                    rowData.push('"' + text.replace(/"/g, '""') + '"');
-                }
-                csv.push(rowData.join(";"));
-            });
-
-            const csvString = BOM + csv.join("\n");
-            const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-            const link = document.createElement("a");
-            const date = new Date().toISOString().slice(0, 10);
-            link.href = URL.createObjectURL(blob);
-            link.download = `Indicadores_TA_${date}.csv`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // Atalho Teclado
-        document.onkeydown = function(evt) {
-            evt = evt || window.event;
-            if (evt.key === "Escape" || evt.key === "Esc") {
-                if(document.body.classList.contains('modal-active')) {
-                    closeModal();
-                    // Fecha confirmação se estiver aberta
-                    const confirmModal = document.getElementById('confirm-modal');
-                    if(!confirmModal.classList.contains('opacity-0')) toggleConfirmModal();
-                }
-                closeDefinition();
-            }
-        };
+        window.onload = renderDashboard;
     </script>
 </body>
 </html>
