@@ -233,7 +233,6 @@
             <div class="flex-1 overflow-y-auto p-12 modal-scroll">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     <div class="lg:col-span-8 space-y-10">
-                        <!-- Container de Gráfico PRETO -->
                         <div class="bg-slate-900 rounded-3xl p-10 shadow-2xl relative group overflow-hidden border border-slate-800">
                             <div class="flex justify-between items-center mb-8 relative z-10">
                                 <div>
@@ -241,9 +240,7 @@
                                     <span id="modal-format-value" class="text-4xl font-black text-white tracking-tighter"></span>
                                 </div>
                                 <div id="modal-unit-badge" class="px-3 py-1 bg-white/5 border border-white/10 rounded-full">
-                                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-                                        <!-- Dinâmico -->
-                                    </span>
+                                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider"></span>
                                 </div>
                             </div>
                             <div class="h-48 flex items-center justify-center relative z-10">
@@ -375,6 +372,7 @@
                         indicatorResponsible: "A definir",
                         frequency: "Mensal",
                         case: "Ao correlacionar dados de saída com a pesquisa de onboarding, identificamos que a falta de suporte social no 2º mês era a causa raiz de 15% dos desligamentos voluntários. A reestruturação do 'Programa de Padrinhos', com capacitação comportamental dos mentores, elevou a retenção no período de experiência para 98%.",
+                        notes: "Considerar desligamentos voluntários e involuntários.",
                         chartType: 'doughnut',
                         chartData: [98, 2],
                         labels: ['Retidos', 'Turnover']
@@ -393,6 +391,7 @@
                         indicatorResponsible: "A definir",
                         frequency: "Mensal (Acumulado)",
                         case: "Em um piloto na Diretoria Comercial, diagnosticamos que a curva de pressão por metas no 4º mês gerava um pico de evasão. Ajustamos a régua de comissionamento para um modelo progressivo no primeiro semestre, resultando em um aumento de 20 p.p. na retenção de novos consultores.",
+                        notes: "Foca especificamente na 'curva de sobrevivência' de novas safras.",
                         chartType: 'line',
                         chartData: [72, 78, 85, 88, 92, 91],
                         labels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6']
@@ -411,6 +410,7 @@
                         indicatorResponsible: "A definir",
                         frequency: "Semestral",
                         case: "Realizamos uma análise de regressão cruzando a origem do candidato com a Avaliação de Desempenho do 1º ano. Constatamos que profissionais vindos de 'Indicação Interna' possuem performance 30% superior. Este dado fundamentou o aumento do budget para premiação do programa de indicações.",
+                        notes: "Exige tempo de maturação do desempenho.",
                         chartType: 'bar',
                         chartData: [65, 88, 95],
                         labels: ['Mercado', 'MAG Atual', 'Ideal']
@@ -436,6 +436,7 @@
                         indicatorResponsible: "A definir",
                         frequency: "Trimestral",
                         case: "Diante da dificuldade em atrair perfis Tech, lançamos uma campanha de Employer Branding focada na 'Jornada Real do Colaborador'. Em 12 meses, nossa nota no Glassdoor subiu organicamente para 4.2, correlacionando com um aumento de 40% na candidatura espontânea de perfis sêniores.",
+                        notes: "",
                         chartType: 'line',
                         chartData: [3.8, 3.9, 4.0, 4.1, 4.15, 4.2],
                         labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6']
@@ -454,6 +455,7 @@
                         indicatorResponsible: "A definir",
                         frequency: "Mensal",
                         case: "A análise do funil revelou que perdíamos 65% dos finalistas aprovados na etapa de 'Oferta' devido à morosidade na aprovação (média de 15 dias). Implementamos um fluxo automático via Power Automate, reduzindo o SLA para 4 dias e aumentando a taxa de aceite em 30%.",
+                        notes: "Dimensionar por fonte.",
                         chartType: 'bar',
                         chartData: [1000, 450, 120, 55, 45],
                         labels: ['Inscritos', 'Triados', 'Entrevista', 'Oferta', 'Contratados']
@@ -464,7 +466,7 @@
                         type: "Métrica",
                         unitLabel: "Volume (Qtd)",
                         description: "Relaciona o volume de inscritos com as vagas disponíveis para medir atratividade.",
-                        importance: "Mede o volume de interesse e a eficácia da estratégia de atração. Um alto índice exige maior esforço de triagem técnica, enquanto um baixo índice sinaliza desafios de marca. O equilíbrio garante critérios elevados sem sobrecarga operacional.",
+                        importance: "Mede o volume de interesse e a eficácia da estratégia de atração. Um alto índice exige maior esforço de triagem técnica para focar na 'Concorrência Real', enquanto um baixo índice sinaliza desafios de remuneração ou employer branding. O equilíbrio garante critérios elevados sem sobrecarga operacional.",
                         currentValue: "5.2",
                         formula: "Total de Inscritos / Vagas Disponíveis",
                         source: "Gupy",
@@ -472,6 +474,7 @@
                         indicatorResponsible: "A definir",
                         frequency: "Mensal",
                         case: "Vagas administrativas recebiam média de 300 inscritos (ruído). Refinamos os testes de lógica e fit cultural na triagem automática da Gupy, reduzindo o volume para 5.2 candidatos altamente qualificados por vaga, aumentando a agilidade do time de R&S.",
+                        notes: "",
                         chartType: 'bar',
                         chartData: [15, 10, 5.2],
                         labels: ['Ago', 'Out', 'Dez']
@@ -497,6 +500,7 @@
                         indicatorResponsible: "A definir",
                         frequency: "Mensal",
                         case: "Calculamos o custo de oportunidade da 'cadeira vazia' em áreas críticas e identificamos um impacto significativo. Através da automação da triagem com IA e do agendamento de entrevistas self-service, reduzimos o tempo médio de fechamento de 45 para 28 dias.",
+                        notes: "Mapeamento de posições críticas.",
                         chartType: 'line',
                         chartData: [45, 40, 35, 30, 28, 28],
                         labels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6']
@@ -510,11 +514,12 @@
                         importance: "Diversidade é motor de inovação e vantagem competitiva. Equipes plurais tomam decisões melhores, resolvem problemas complexos de forma mais criativa e garantem que os produtos reflitam nossa base de clientes.",
                         currentValue: "25%",
                         formula: "% Grupos Minoritários (Candidatos vs Contratados)",
-                        source: "Censo Interno / Base Efetivo",
+                        source: "Gupy/Efetivo/LG",
                         responsible: "Remuneração / ESG",
                         indicatorResponsible: "A definir",
                         frequency: "Trimestral",
                         case: "Para atingir as metas de ESG, instituímos a política de que nenhuma vaga de liderança fecha sem ao menos 30% de diversidade na shortlist final. Essa ação intencional resultou em um crescimento de 25% na contratação de mulheres em cargos de gestão.",
+                        notes: "Dimensionar por cargo.",
                         chartType: 'bar',
                         chartData: [15, 25],
                         labels: ['Ano Anterior', 'Atual']
@@ -533,6 +538,7 @@
                         indicatorResponsible: "A definir",
                         frequency: "Mensal (Coorte)",
                         case: "Analisamos o 'tempo até o breakeven' de novos corretores. Implementamos uma trilha de capacitação intensiva focada em produtos-chave nas primeiras 4 semanas. O resultado foi a antecipação da produtividade plena de 180 para 120 dias.",
+                        notes: "",
                         chartType: 'line',
                         chartData: [0, 25, 55, 80, 95, 100],
                         labels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6']
