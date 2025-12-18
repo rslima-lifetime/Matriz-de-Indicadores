@@ -32,6 +32,9 @@
             border: 1px solid rgba(226, 232, 240, 0.8);
             position: relative;
             overflow: hidden;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
         }
 
         .metric-card:hover {
@@ -89,11 +92,6 @@
         .modal-scroll::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 10px;
-        }
-
-        .sparkline-container {
-            height: 40px;
-            width: 100px;
         }
 
         /* Tooltips */
@@ -156,9 +154,9 @@
             <div class="flex items-center gap-4">
                 <div class="text-right hidden sm:block">
                     <p class="text-xs font-bold text-amber-500 uppercase tracking-widest flex items-center justify-end gap-1">
-                        <i data-lucide="alert-triangle" class="w-3 h-3"></i> Ambiente de Protótipo
+                        <i data-lucide="alert-triangle" class="w-3 h-3"></i> Ambiente de Estruturação
                     </p>
-                    <p class="text-sm font-semibold text-slate-400">Dados Fictícios para Demonstração</p>
+                    <p class="text-sm font-semibold text-slate-400">Modelo de Indicadores em Definição</p>
                 </div>
             </div>
         </div>
@@ -166,10 +164,10 @@
 
     <main class="max-w-7xl mx-auto px-8 mt-12">
         <div class="mb-12 animate-fade-in">
-            <h2 class="text-3xl font-bold text-slate-900 mb-4 text-balance">Direcionadores Estratégicos de Atração e Talentos</h2>
+            <h2 class="text-3xl font-bold text-slate-900 mb-4 text-balance">Mapeamento de Indicadores Estratégicos</h2>
             <p class="text-slate-600 max-w-4xl text-lg leading-relaxed">
-                Este painel apresenta uma curadoria de indicadores fundamentais para apoiar a <strong>Gerência de Atração de Talentos</strong> em suas diversas frentes. 
-                Navegue pelos modelos abaixo para visualizar como o People Analytics tangibiliza a eficiência e o impacto das atividades no negócio.
+                Este catálogo apresenta a proposta de indicadores para a <strong>Gerência de Atração de Talentos</strong>. 
+                Os cards abaixo descrevem o conceito e a finalidade de cada métrica para facilitar o alinhamento estratégico. Clique em "Explorar Detalhes" para a ficha técnica completa.
             </p>
         </div>
 
@@ -200,18 +198,23 @@
             <div class="flex-1 overflow-y-auto p-8 modal-scroll">
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
                     <div class="lg:col-span-3 space-y-8">
+                        <!-- Gráfico -->
                         <div class="bg-slate-900 rounded-2xl p-6 shadow-inner relative overflow-hidden group">
                             <div class="flex justify-between items-center mb-6">
                                 <span class="text-xs font-bold text-slate-400 uppercase tracking-tighter flex items-center gap-2">
-                                    <i data-lucide="layout-template" class="w-3 h-3"></i> Representação do Case Real
+                                    <i data-lucide="layout-template" class="w-3 h-3"></i> Exemplo de Formato Visual
                                 </span>
-                                <span class="px-2 py-1 bg-amber-500/20 text-amber-400 text-[10px] font-bold rounded uppercase">Simulação</span>
+                                <div class="flex items-center gap-3">
+                                    <span id="modal-format-value" class="text-xl font-black text-sky-400"></span>
+                                    <span class="px-2 py-1 bg-amber-500/20 text-amber-400 text-[10px] font-bold rounded uppercase">Ilustrativo</span>
+                                </div>
                             </div>
                             <div class="h-56 flex items-center justify-center">
                                 <canvas id="modalChart"></canvas>
                             </div>
                         </div>
 
+                        <!-- Importância -->
                         <div class="space-y-3">
                             <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                 <i data-lucide="target" class="w-4 h-4 text-sky-500"></i> Por que é Vital?
@@ -219,6 +222,7 @@
                             <p id="modal-importance" class="text-slate-700 leading-relaxed text-sm"></p>
                         </div>
 
+                        <!-- Case e Observações -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-3">
                                 <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
@@ -239,6 +243,7 @@
                         </div>
                     </div>
 
+                    <!-- Especificações Técnicas -->
                     <div class="lg:col-span-2">
                         <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm sticky top-0">
                             <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
@@ -247,6 +252,7 @@
                                 </h4>
                             </div>
                             <div class="divide-y divide-slate-100">
+                                <!-- Fórmula -->
                                 <div class="p-5 flex gap-4">
                                     <div class="w-10 h-10 rounded-lg bg-sky-50 flex items-center justify-center shrink-0">
                                         <i data-lucide="calculator" class="w-5 h-5 text-sky-600"></i>
@@ -256,6 +262,7 @@
                                         <p id="modal-formula" class="text-sm font-medium text-slate-700"></p>
                                     </div>
                                 </div>
+                                <!-- Fonte -->
                                 <div class="p-5 flex gap-4">
                                     <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
                                         <i data-lucide="database" class="w-5 h-5 text-indigo-600"></i>
@@ -265,6 +272,7 @@
                                         <p id="modal-source" class="text-sm font-medium text-slate-700"></p>
                                     </div>
                                 </div>
+                                <!-- Responsável pela fonte -->
                                 <div class="p-5 flex gap-4">
                                     <div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center shrink-0">
                                         <i data-lucide="user-check" class="w-5 h-5 text-orange-600"></i>
@@ -274,6 +282,7 @@
                                         <p id="modal-responsible" class="text-sm font-medium text-slate-700"></p>
                                     </div>
                                 </div>
+                                <!-- Responsável pelo indicador -->
                                 <div class="p-5 flex gap-4">
                                     <div class="w-10 h-10 rounded-lg bg-white shadow-sm border border-slate-100 flex items-center justify-center shrink-0">
                                         <i data-lucide="users" class="w-5 h-5 text-indigo-500"></i>
@@ -289,6 +298,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Frequência -->
                                 <div class="p-5 flex gap-4">
                                     <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
                                         <i data-lucide="calendar" class="w-5 h-5 text-emerald-600"></i>
@@ -298,6 +308,7 @@
                                         <p id="modal-frequency" class="text-sm font-bold text-slate-700"></p>
                                     </div>
                                 </div>
+                                <!-- Meta -->
                                 <div class="p-5 flex gap-4 bg-sky-50/30">
                                     <div class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0">
                                         <i data-lucide="flag" class="w-5 h-5 text-sky-600"></i>
@@ -332,10 +343,9 @@
                         id: "ret-90",
                         name: "Retenção 90 dias",
                         type: "KPI",
+                        description: "Mede o percentual de colaboradores que permanecem na empresa após o período legal de experiência.",
                         currentValue: "98%",
                         variation: "+3.2%",
-                        trend: "up",
-                        status: "success",
                         formula: "(Contratados permanentes > 90 dias / Total Admissões)",
                         source: "Base Efetivo / LG",
                         responsible: "Remuneração",
@@ -343,43 +353,39 @@
                         frequency: "Mensal",
                         target: "A definir",
                         importance: "É o termômetro crítico da Integração e do Alinhamento Cultural. Uma baixa retenção inicial indica que a promessa feita na contratação não condiz com a realidade, gerando altos custos de re-processamento.",
-                        case: "Identificamos que 15% das saídas ocorriam no 2º mês, mesmo com o programa de Padrinhos ativo. Ao reformularmos o projeto, focando na capacitação técnica e comportamental dos 'Padrinhos' selecionados, a retenção inicial saltou para 98%.",
+                        case: "Identificamos que 15% das saídas ocorriam no 2º mês. Ao reformularmos o projeto focado nos 'Padrinhos', a retenção inicial saltou para 98%.",
                         notes: "",
                         chartType: 'doughnut',
                         chartData: [98, 2],
-                        labels: ['Retidos', 'Rotatividade'],
-                        sparklineData: [85, 87, 86, 90, 95, 98]
+                        labels: ['Retidos', 'Rotatividade']
                     },
                     {
                         id: "ret-6m",
                         name: "Retenção 6 meses",
                         type: "KPI",
+                        description: "Avalia a estabilidade e adaptação do novo talento após o primeiro semestre de jornada na companhia.",
                         currentValue: "91%",
                         variation: "+2.1%",
-                        trend: "up",
-                        status: "success",
                         formula: "(Ativos com > 6 meses / Total admissões há 6 meses)",
                         source: "Base Efetivo / LG",
                         responsible: "Remuneração",
                         indicatorResponsible: "A definir",
                         frequency: "Trimestral",
                         target: "A definir",
-                        importance: "Representa a consolidação do talento e o retorno do investimento inicial. Perder alguém nesta fase significa desperdiçar todo o custo de maturação e treinamento.",
-                        case: "Em áreas comerciais, percebemos que a curva de aprendizado era de 4 meses. Ajustamos a régua de metas do primeiro semestre e a retenção saltou 20%.",
+                        importance: "Representa a consolidação do talento e o retorno do investimento inicial. Perder alguém nesta fase significa desperdiçar todo o custo de maturação e treinamento sem ter colhido os frutos da produtividade plena.",
+                        case: "Em áreas comerciais, ajustamos a régua de metas do primeiro semestre e a retenção saltou 20%.",
                         notes: "",
                         chartType: 'line',
                         chartData: [72, 75, 78, 88, 92, 91],
-                        labels: ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6'],
-                        sparklineData: [70, 75, 80, 85, 90, 91]
+                        labels: ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6']
                     },
                     {
                         id: "qualidade",
                         name: "Qualidade da Contratação",
                         type: "KPI",
+                        description: "Mede a assertividade da seleção através do cruzamento entre desempenho técnico e alinhamento cultural.",
                         currentValue: "88/100",
                         variation: "+5.4%",
-                        trend: "up",
-                        status: "success",
                         formula: "(Desempenho Ciclo Gente + Nota de Alinhamento Cultural) / 2",
                         source: "Pesquisa Gestor / Ciclo de Gente",
                         responsible: "Gerência de Atração de Talentos",
@@ -387,12 +393,11 @@
                         frequency: "Semestral",
                         target: "A definir",
                         importance: "É o indicador que valida se o RH está entregando ativos de valor para o negócio. Contratações de alta qualidade elevam o patamar de entrega da companhia.",
-                        case: "Cruzamos dados e vimos que candidatos vindos de 'Indicação Interna' tinham nota de desempenho 30% superior aos de portais de vagas tradicionais.",
+                        case: "Cruzamos dados e vimos que candidatos de 'Indicação Interna' tinham nota de desempenho 30% superior.",
                         notes: "",
                         chartType: 'bar',
                         chartData: [65, 95],
-                        labels: ['Portais Tradicionais', 'Indicação Interna'],
-                        sparklineData: [70, 75, 82, 85, 87, 88]
+                        labels: ['Portais Tradicionais', 'Indicação Interna']
                     }
                 ]
             },
@@ -405,67 +410,61 @@
                         id: "reputacao",
                         name: "Índice de Reputação",
                         type: "Indicador",
+                        description: "Consolida a percepção externa da marca empregadora em portais como Glassdoor e Indeed.",
                         currentValue: "4.2",
                         variation: "+0.4",
-                        trend: "up",
-                        status: "success",
                         formula: "Média Ponderada (Satisfação Interna + Glassdoor + Indeed)",
                         source: "Monitoramento Social / Glassdoor",
                         responsible: "Gerência de Atração de Talentos / Marketing",
                         indicatorResponsible: "A definir",
                         frequency: "Trimestral",
                         target: "A definir",
-                        importance: "A marca empregadora funciona como um multiplicador de eficiência. Uma reputação sólida reduz o custo de aquisição de talentos.",
-                        case: "Uma campanha focada na Experiência do Colaborador no LinkedIn elevou nossa nota no Glassdoor de 3.8 para 4.2 em menos de um ano.",
+                        importance: "A marca empregadora funciona como um multiplicador de eficiência. Uma reputação sólida reduz o custo de aquisição de talentos e atrai perfis qualificados.",
+                        case: "Uma campanha focada na Experiência do Colaborador elevou nossa nota no Glassdoor de 3.8 para 4.2.",
                         notes: "",
                         chartType: 'line',
                         chartData: [3.8, 3.85, 3.9, 4.05, 4.15, 4.2],
-                        labels: ['Trim 1', 'Trim 2', 'Trim 3', 'Trim 4', 'Trim 5', 'Trim 6'],
-                        sparklineData: [3.8, 3.9, 3.95, 4.1, 4.15, 4.2]
+                        labels: ['Trim 1', 'Trim 2', 'Trim 3', 'Trim 4', 'Trim 5', 'Trim 6']
                     },
                     {
                         id: "conv-funil",
                         name: "Conversão por Etapa",
                         type: "Indicador",
+                        description: "Identifica a eficiência operacional do funil de recrutamento e possíveis gargalos burocráticos.",
                         currentValue: "28%",
                         variation: "-2.0%",
-                        trend: "down",
-                        status: "warning",
                         formula: "(Candidatos Aprovados / Candidatos Inscritos na Etapa)",
                         source: "Gupy / ATS",
                         responsible: "Gerência de Atração de Talentos",
                         indicatorResponsible: "A definir",
                         frequency: "Mensal",
                         target: "A definir",
-                        importance: "Mede a saúde operacional do recrutamento. Gargalos em etapas específicas revelam processos burocráticos ou falta de calibração.",
-                        case: "Ao reduzir o processo de 6 para 3 etapas em vagas operacionais, a taxa de desistência de candidatos caiu 45%.",
+                        importance: "Mede a saúde operacional do recrutamento. Gargalos em etapas específicas revelam processos lentos ou falta de calibração entre RH e gestores.",
+                        case: "Ao reduzir o processo de 6 para 3 etapas, a taxa de desistência de candidatos caiu 45%.",
                         notes: "",
                         chartType: 'bar',
                         chartData: [55, 100],
-                        labels: ['Processo Antigo', 'Processo Atual'],
-                        sparklineData: [25, 30, 28, 32, 30, 28]
+                        labels: ['Processo Antigo', 'Processo Atual']
                     },
                     {
                         id: "cand-vaga",
                         name: "Candidatos por Vaga",
                         type: "Métrica",
+                        description: "Relaciona o volume de inscritos com as vagas disponíveis para medir a competitividade e atratividade.",
                         currentValue: "5.2",
                         variation: "-3.3",
-                        trend: "down",
-                        status: "success",
                         formula: "Total Candidatos / Vagas Disponíveis",
                         source: "Gupy (Relatórios)",
                         responsible: "Gerência de Atração de Talentos",
                         indicatorResponsible: "A definir",
                         frequency: "Mensal",
                         target: "A definir",
-                        importance: "Mede o volume de interesse e a eficácia da estratégia de atração. O equilíbrio garante critérios elevados sem sobrecarga operacional.",
-                        case: "Ao refinar a triagem automática na Gupy, reduzimos o ruído de inscritos não aderentes de 15 para 5.2 candidatos por vaga.",
+                        importance: "Mede o equilíbrio entre atração e assertividade. O ideal de 5 candidatos garante profundidade na análise sem sobrecarga operacional.",
+                        case: "Ao refinar a triagem automática na Gupy, reduzimos o ruído e permitimos que o RH focasse na Concorrência Real.",
                         notes: "",
                         chartType: 'bar',
                         chartData: [15, 12, 10, 8, 6, 5.2],
-                        labels: ['Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                        sparklineData: [15, 13, 11, 9, 7, 5.2]
+                        labels: ['Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
                     }
                 ]
             },
@@ -478,32 +477,29 @@
                         id: "time-hire",
                         name: "Tempo de Contratação",
                         type: "Indicador",
+                        description: "Tempo médio gasto desde a abertura oficial da vaga até a aceitação da proposta pelo candidato.",
                         currentValue: "28d",
                         variation: "-17d",
-                        trend: "down",
-                        status: "success",
                         formula: "Data de Aceite - Data de Abertura da Vaga",
                         source: "Gupy / Fluxo de Aprovações",
                         responsible: "Gerência de Atração de Talentos",
                         indicatorResponsible: "A definir",
                         frequency: "Mensal",
                         target: "A definir",
-                        importance: "Representa o 'Custo da Cadeira Vazia'. Enquanto uma vaga crítica está aberta, há perda direta de receita e sobrecarga no time.",
-                        case: "Reduzimos o tempo de 45 para 28 dias automatizando a triagem inicial, liberando a equipe para a busca ativa estratégica.",
+                        importance: "Representa o 'Custo da Cadeira Vazia'. Cada dia com vaga crítica aberta gera perda direta de receita e sobrecarga no time.",
+                        case: "Reduzimos o tempo de 45 para 28 dias automatizando a triagem inicial com inteligência artificial.",
                         notes: "",
                         chartType: 'line',
                         chartData: [45, 42, 38, 33, 30, 28],
-                        labels: ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6'],
-                        sparklineData: [45, 40, 38, 35, 30, 28]
+                        labels: ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6']
                     },
                     {
                         id: "diversidade",
                         name: "Taxa de Diversidade",
                         type: "KPI",
+                        description: "Monitora o percentual de contratações de grupos minoritários para apoiar as metas globais de inclusão.",
                         currentValue: "25%",
                         variation: "+5.0%",
-                        trend: "up",
-                        status: "warning",
                         formula: "% Grupos Minoritários (Candidatos vs Contratados)",
                         source: "Censo Interno / Gupy",
                         responsible: "Gerência de Atração de Talentos / ESG",
@@ -511,34 +507,31 @@
                         frequency: "Trimestral",
                         target: "A definir",
                         importance: "Diversidade é motor de inovação. Equipes plurais tomam decisões melhores e resolvem problemas complexos de forma mais criativa.",
-                        case: "Implementamos a 'Lista de Finalistas Cega' e aumentamos em 25% a contratação de lideranças femininas em tecnologia.",
+                        case: "Implementamos a 'Lista de Finalistas Cega' e aumentamos em 25% a contratação de lideranças femininas.",
                         notes: "",
                         chartType: 'bar',
                         chartData: [20, 25],
-                        labels: ['Antes da Lista Cega', 'Após Implementação'],
-                        sparklineData: [15, 18, 20, 22, 23, 25]
+                        labels: ['Antes da Lista Cega', 'Após Implementação']
                     },
                     {
                         id: "ramp-up",
                         name: "Curva de Maturação (Ramp-up)",
                         type: "KPI",
+                        description: "Tempo necessário para que o novo colaborador atinja 100% da produtividade esperada no cargo.",
                         currentValue: "120d",
                         variation: "-60d",
-                        trend: "down",
-                        status: "success",
-                        formula: "Dias até 100% da Meta",
+                        formula: "Dias até atingir 100% da Meta",
                         source: "Sistemas Gestão / Ciclo Gente",
                         responsible: "Gerência de Atração de Talentos",
                         indicatorResponsible: "A definir",
                         frequency: "Semestral",
                         target: "A definir",
-                        importance: "Define o retorno real da contratação. Monitorar o tempo até a autonomia plena permite otimizar as trilhas de treinamento.",
-                        case: "Novos colaboradores que passam pela trilha de capacitação intensiva atingem a meta média 2 meses antes do grupo padrão.",
+                        importance: "Define o retorno real da contratação. Monitorar o tempo até a autonomia plena permite otimizar as trilhas de treinamento inicial.",
+                        case: "Colaboradores com trilha intensiva atingem a meta média 2 meses antes do grupo padrão.",
                         notes: "",
                         chartType: 'bar',
                         chartData: [180, 120],
-                        labels: ['Grupo Padrão', 'Grupo Capacitado'],
-                        sparklineData: [180, 170, 160, 150, 135, 120]
+                        labels: ['Grupo Padrão', 'Grupo Capacitado']
                     }
                 ]
             }
@@ -555,31 +548,45 @@
             }
         }
 
-        function createSparklineSVG(data, color) {
-            const min = Math.min(...data);
-            const max = Math.max(...data);
-            const range = max - min;
-            const width = 100;
-            const height = 30;
-            const points = data.map((val, i) => {
-                const x = (i / (data.length - 1)) * width;
-                const y = height - ((val - min) / range) * height;
-                return `${x},${y}`;
-            }).join(' ');
-            return `<svg viewBox="0 0 ${width} ${height}" class="w-full h-full overflow-visible"><polyline fill="none" stroke="${color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="${points}" /></svg>`;
-        }
-
         function renderDashboard() {
             const grid = document.getElementById('dashboard-grid');
             grid.innerHTML = '';
             sections.forEach((section, sIdx) => {
-                const sectionHtml = `<div class="animate-fade-in" style="animation-delay: ${sIdx * 150}ms"><div class="flex items-center gap-3 mb-8"><div class="p-2 bg-${section.color}-500 text-white rounded-lg shadow-md"><i data-lucide="${section.icon}" class="w-6 h-6"></i></div><h3 class="text-2xl font-bold text-slate-800">${section.title}</h3><div class="h-px bg-slate-200 flex-1 ml-4"></div></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">${section.metrics.map(metric => {
-                    const trendColor = metric.trend === 'up' ? 'emerald' : 'rose';
-                    const statusColor = metric.status === 'success' ? 'emerald' : 'amber';
-                    const sparkColor = metric.status === 'success' ? '#10b981' : '#f59e0b';
-                    const typeStyle = getTypeStyle(metric.type);
-                    return `<div onclick="openModal('${metric.id}')" class="metric-card p-8 rounded-2xl cursor-pointer"><div class="flex justify-between items-start mb-6"><div class="p-2 bg-${section.color}-50 rounded-lg"><i data-lucide="bar-chart-2" class="w-5 h-5 text-${section.color}-600"></i></div><span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded border ${typeStyle}">${metric.type}</span></div><h4 class="text-xl font-bold text-slate-900 mb-1">${metric.name}</h4><p class="text-xs text-slate-400 font-medium mb-6 uppercase tracking-wider">${section.title}</p><div class="flex items-end justify-between mb-4"><div><p class="text-3xl font-black text-slate-900 leading-none"><span class="text-xs text-slate-300 font-normal mr-1 italic">Ex:</span>${metric.currentValue}</p><div class="flex items-center gap-1 mt-2"><i data-lucide="${metric.trend === 'up' ? 'trending-up' : 'trending-down'}" class="w-3.5 h-3.5 text-${trendColor}-500"></i><span class="text-xs font-bold text-${trendColor}-500">${metric.variation}</span></div></div><div class="sparkline-container">${createSparklineSVG(metric.sparklineData, sparkColor)}</div></div><p class="text-[9px] text-slate-300 italic mb-4">* Protótipo: Números simulados para demonstração.</p><div class="pt-6 border-t border-slate-50 flex items-center justify-between text-sky-600 font-bold text-xs uppercase tracking-wider"><span>Explorar Detalhes</span><i data-lucide="arrow-right" class="w-4 h-4"></i></div></div>`;
-                }).join('')}</div></div>`;
+                const sectionHtml = `
+                    <div class="animate-fade-in" style="animation-delay: ${sIdx * 150}ms">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="p-2 bg-${section.color}-500 text-white rounded-lg shadow-md">
+                                <i data-lucide="${section.icon}" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-slate-800">${section.title}</h3>
+                            <div class="h-px bg-slate-200 flex-1 ml-4"></div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            ${section.metrics.map(metric => {
+                                const typeStyle = getTypeStyle(metric.type);
+                                return `
+                                <div onclick="openModal('${metric.id}')" class="metric-card p-8 rounded-2xl cursor-pointer">
+                                    <div class="flex justify-between items-start mb-6">
+                                        <div class="p-2 bg-${section.color}-50 rounded-lg">
+                                            <i data-lucide="bar-chart-2" class="w-5 h-5 text-${section.color}-600"></i>
+                                        </div>
+                                        <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded border ${typeStyle}">
+                                            ${metric.type}
+                                        </span>
+                                    </div>
+                                    <h4 class="text-xl font-bold text-slate-900 mb-2 leading-tight">${metric.name}</h4>
+                                    <p class="text-[13px] text-slate-500 leading-relaxed mb-6 line-clamp-3">${metric.description}</p>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-8">${section.title}</p>
+                                    <div class="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between text-sky-600 font-bold text-xs uppercase tracking-wider">
+                                        <span>Explorar Detalhes</span>
+                                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                    </div>
+                                </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
                 grid.innerHTML += sectionHtml;
             });
             lucide.createIcons();
@@ -602,6 +609,9 @@
             document.getElementById('modal-notes').innerText = metric.notes || "";
             document.getElementById('modal-frequency').innerText = metric.frequency;
             document.getElementById('modal-target').innerText = metric.target;
+            
+            const formatValue = document.getElementById('modal-format-value');
+            formatValue.innerText = `${metric.currentValue} (${metric.variation})`;
 
             typeBadge.innerText = metric.type;
             typeBadge.className = `text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${getTypeStyle(metric.type)}`;
@@ -624,7 +634,10 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: { 
-                    legend: { display: metric.chartType === 'doughnut' || (metric.chartType === 'bar' && (metric.id === 'qualidade' || metric.id === 'ramp-up' || metric.id === 'cand-vaga')), labels: { color: '#94a3b8', font: { size: 10, weight: 'bold' } } },
+                    legend: { 
+                        display: metric.chartType === 'doughnut' || (metric.chartType === 'bar' && (metric.id === 'qualidade' || metric.id === 'ramp-up' || metric.id === 'cand-vaga')), 
+                        labels: { color: '#94a3b8', font: { size: 10, weight: 'bold' } } 
+                    },
                     tooltip: { backgroundColor: '#1e293b' }
                 }
             };
@@ -639,8 +652,8 @@
                 data: {
                     labels: metric.labels,
                     datasets: [{
-                        label: 'Resultado',
-                        data: metric.chartData,
+                        label: 'Referência',
+                        data: (metric.id === 'ret-90') ? [98, 2] : (metric.id === 'ret-6m' ? [72, 75, 78, 88, 92, 91] : [65, 95]),
                         backgroundColor: metric.chartType === 'doughnut' ? [color, '#1e293b'] : (metric.chartType === 'bar' ? ['#64748b', color] : `${color}33`),
                         borderColor: color,
                         borderWidth: 3,
