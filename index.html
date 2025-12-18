@@ -60,7 +60,7 @@
         }
 
         .modal-overlay {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(8px);
             transition: opacity 0.3s ease;
         }
@@ -94,61 +94,88 @@
             border-radius: 10px;
         }
 
-        /* Tooltips */
         .info-tooltip {
             position: relative;
             display: inline-block;
         }
         .info-tooltip .tooltiptext {
             visibility: hidden;
-            width: 280px;
+            width: 320px;
             background-color: #1e293b;
             color: #fff;
             text-align: left;
-            border-radius: 8px;
-            padding: 12px;
+            border-radius: 10px;
+            padding: 16px;
             position: absolute;
-            z-index: 100;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -140px;
+            z-index: 9999;
+            bottom: 160%;
+            right: 0;
             opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 11px;
-            line-height: 1.4;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(10px);
+            font-size: 12px;
+            line-height: 1.6;
             font-weight: 400;
-            font-family: 'Inter', sans-serif;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
             pointer-events: none;
+            white-space: normal;
         }
         .info-tooltip:hover .tooltiptext {
             visibility: visible;
             opacity: 1;
+            transform: translateY(0);
         }
         .info-tooltip .tooltiptext::after {
             content: "";
             position: absolute;
             top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
+            right: 15px;
+            border-width: 8px;
             border-style: solid;
             border-color: #1e293b transparent transparent transparent;
         }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            color: #64748b;
+            transition: all 0.2s ease;
+            z-index: 60;
+        }
+        .nav-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+        .nav-btn-prev { left: -25px; }
+        .nav-btn-next { right: -25px; }
+        
+        @media (max-width: 1024px) {
+            .nav-btn-prev { left: 10px; }
+            .nav-btn-next { right: 10px; }
+        }
     </style>
 </head>
-<body class="min-h-screen pb-20">
+<body class="min-h-screen pb-20 text-slate-800">
 
-    <!-- Cabeçalho -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-8 py-4">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-8 py-4 shadow-sm">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-sky-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-sky-200">
                     <i data-lucide="bar-chart-big" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-slate-900">Núcleo de <span class="text-sky-600">People Analytics</span></h1>
-                    <p class="text-xs text-slate-500 font-medium uppercase tracking-wide">Gerência de Atração de Talentos - Luciana Rosa</p>
+                    <h1 class="text-xl font-bold tracking-tight text-slate-900 leading-none">Núcleo de <span class="text-sky-600">People Analytics</span></h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Gerência de Atração de Talentos - Luciana Rosa</p>
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -156,7 +183,7 @@
                     <p class="text-xs font-bold text-amber-500 uppercase tracking-widest flex items-center justify-end gap-1">
                         <i data-lucide="alert-triangle" class="w-3 h-3"></i> Ambiente de Estruturação
                     </p>
-                    <p class="text-sm font-semibold text-slate-400">Modelo de Indicadores em Definição</p>
+                    <p class="text-sm font-semibold text-slate-400 italic">Modelo de Indicadores Estratégicos</p>
                 </div>
             </div>
         </div>
@@ -164,22 +191,29 @@
 
     <main class="max-w-7xl mx-auto px-8 mt-12">
         <div class="mb-12 animate-fade-in">
-            <h2 class="text-3xl font-bold text-slate-900 mb-4 text-balance">Mapeamento de Indicadores Estratégicos</h2>
-            <p class="text-slate-600 max-w-4xl text-lg leading-relaxed">
+            <h2 class="text-3xl font-bold text-slate-900 mb-4 text-balance tracking-tight">Mapeamento de Indicadores Estratégicos</h2>
+            <p class="text-slate-600 max-w-4xl text-lg leading-relaxed font-light">
                 Este catálogo apresenta a proposta de indicadores para a <strong>Gerência de Atração de Talentos</strong>. 
-                Os cards abaixo descrevem o conceito e a finalidade de cada métrica para facilitar o alinhamento estratégico. Clique em "Explorar Detalhes" para a ficha técnica completa.
+                Os cards abaixo descrevem o propósito de cada métrica. Clique em "Explorar Detalhes" para visualizar a fundamentação técnica e cases.
             </p>
         </div>
 
         <div id="dashboard-grid" class="space-y-16"></div>
     </main>
 
-    <!-- Template do Modal -->
-    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[95vh] overflow-hidden flex flex-col modal-container">
-            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-8 modal-overlay hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] flex flex-col modal-container relative">
+            
+            <button onclick="prevIndicator()" class="nav-btn nav-btn-prev group" title="Indicador Anterior">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+            <button onclick="nextIndicator()" class="nav-btn nav-btn-next group" title="Próximo Indicador">
+                <i data-lucide="chevron-right" class="w-6 h-6"></i>
+            </button>
+
+            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0 rounded-t-2xl">
                 <div class="flex items-center gap-4">
-                    <div id="modal-icon-container" class="p-3 rounded-xl text-white">
+                    <div id="modal-icon-container" class="p-3 rounded-xl text-white shadow-lg">
                         <i id="modal-icon" data-lucide="activity"></i>
                     </div>
                     <div>
@@ -187,7 +221,7 @@
                             <h3 id="modal-title" class="text-2xl font-bold text-slate-900 leading-tight"></h3>
                             <span id="modal-type-badge" class="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border"></span>
                         </div>
-                        <p id="modal-category" class="text-xs font-bold uppercase tracking-widest text-slate-400"></p>
+                        <p id="modal-category" class="text-xs font-bold uppercase tracking-widest text-slate-400 mt-0.5"></p>
                     </div>
                 </div>
                 <button onclick="closeModal()" class="w-10 h-10 rounded-full hover:bg-slate-200 flex items-center justify-center transition-colors">
@@ -195,135 +229,117 @@
                 </button>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-8 modal-scroll">
-                <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
-                    <div class="lg:col-span-3 space-y-8">
-                        <!-- Gráfico -->
-                        <div class="bg-slate-900 rounded-2xl p-6 shadow-inner relative overflow-hidden group">
-                            <div class="flex justify-between items-center mb-6">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-tighter flex items-center gap-2">
-                                    <i data-lucide="layout-template" class="w-3 h-3"></i> Exemplo de Formato Visual
-                                </span>
-                                <div class="flex items-center gap-3">
-                                    <span id="modal-format-value" class="text-xl font-black text-sky-400"></span>
-                                    <span class="px-2 py-1 bg-amber-500/20 text-amber-400 text-[10px] font-bold rounded uppercase">Ilustrativo</span>
+            <div class="flex-1 overflow-y-auto p-12 modal-scroll">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                    <div class="lg:col-span-8 space-y-10">
+                        <div class="bg-slate-900 rounded-3xl p-10 shadow-2xl relative group overflow-hidden border border-slate-800">
+                            <div class="flex justify-between items-center mb-8 relative z-10">
+                                <div>
+                                    <span class="text-[10px] font-bold text-sky-400 uppercase tracking-[0.2em] block mb-1">Exemplo de Formato Visual</span>
+                                    <span id="modal-format-value" class="text-4xl font-black text-white tracking-tighter"></span>
+                                </div>
+                                <div id="modal-unit-badge" class="px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+                                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider"></span>
                                 </div>
                             </div>
-                            <div class="h-56 flex items-center justify-center">
+                            <div class="h-48 flex items-center justify-center relative z-10">
                                 <canvas id="modalChart"></canvas>
                             </div>
                         </div>
 
-                        <!-- Importância -->
-                        <div class="space-y-3">
-                            <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                <i data-lucide="target" class="w-4 h-4 text-sky-500"></i> Por que é Vital?
+                        <div class="space-y-4 px-2">
+                            <h4 class="text-sm font-bold text-slate-800 uppercase tracking-widest flex items-center gap-2 border-l-4 border-sky-500 pl-4">
+                                Por que é Vital para o Negócio?
                             </h4>
-                            <p id="modal-importance" class="text-slate-700 leading-relaxed text-sm"></p>
+                            <p id="modal-importance" class="text-slate-700 leading-relaxed text-sm font-medium"></p>
                         </div>
 
-                        <!-- Case e Observações -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-3">
-                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500"></i> Case de Aplicação
-                                </h4>
-                                <div class="bg-amber-50/50 border-l-4 border-amber-400 p-4 rounded-r-xl h-full">
-                                    <p id="modal-case" class="text-slate-700 italic text-sm leading-relaxed"></p>
-                                </div>
-                            </div>
-                            <div class="space-y-3">
-                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <i data-lucide="message-square" class="w-4 h-4 text-indigo-500"></i> Observações
-                                </h4>
-                                <div class="bg-indigo-50/50 border-l-4 border-indigo-400 p-4 rounded-r-xl h-full min-h-[100px]">
-                                    <p id="modal-notes" class="text-slate-600 text-sm leading-relaxed"></p>
-                                </div>
+                        <div class="space-y-4 px-2">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <i data-lucide="lightbulb" class="w-3 h-3 text-amber-500"></i> Case de Aplicação
+                            </h4>
+                            <div class="bg-amber-50/50 border-l-4 border-amber-400 p-5 rounded-r-xl">
+                                <p id="modal-case" class="text-slate-700 italic text-sm leading-relaxed"></p>
                             </div>
                         </div>
+                        <div class="h-16"></div>
                     </div>
 
-                    <!-- Especificações Técnicas -->
-                    <div class="lg:col-span-2">
-                        <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm sticky top-0">
-                            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                    <div class="lg:col-span-4">
+                        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm sticky top-0 overflow-visible">
+                            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 rounded-t-2xl">
                                 <h4 class="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="settings-2" class="w-4 h-4"></i> Especificações Técnicas
+                                    <i data-lucide="settings-2" class="w-4 h-4 text-slate-500"></i> Especificações Técnicas
                                 </h4>
                             </div>
-                            <div class="divide-y divide-slate-100">
-                                <!-- Fórmula -->
+                            <div class="divide-y divide-slate-100 overflow-visible">
                                 <div class="p-5 flex gap-4">
                                     <div class="w-10 h-10 rounded-lg bg-sky-50 flex items-center justify-center shrink-0">
                                         <i data-lucide="calculator" class="w-5 h-5 text-sky-600"></i>
                                     </div>
-                                    <div class="space-y-1">
+                                    <div>
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Fórmula / Base</p>
-                                        <p id="modal-formula" class="text-sm font-medium text-slate-700"></p>
+                                        <p id="modal-formula" class="text-xs font-medium text-slate-700 mt-0.5"></p>
                                     </div>
                                 </div>
-                                <!-- Fonte -->
                                 <div class="p-5 flex gap-4">
                                     <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
                                         <i data-lucide="database" class="w-5 h-5 text-indigo-600"></i>
                                     </div>
-                                    <div class="space-y-1">
+                                    <div>
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Fonte de Dados</p>
-                                        <p id="modal-source" class="text-sm font-medium text-slate-700"></p>
+                                        <p id="modal-source" class="text-xs font-medium text-slate-700 mt-0.5"></p>
                                     </div>
                                 </div>
-                                <!-- Responsável pela fonte -->
                                 <div class="p-5 flex gap-4">
                                     <div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center shrink-0">
-                                        <i data-lucide="user-check" class="w-5 h-5 text-orange-600"></i>
+                                        <i data-lucide="user-plus" class="w-5 h-5 text-orange-600"></i>
                                     </div>
-                                    <div class="space-y-1">
+                                    <div>
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Responsável pela fonte</p>
-                                        <p id="modal-responsible" class="text-sm font-medium text-slate-700"></p>
+                                        <p id="modal-responsible" class="text-xs font-medium text-slate-700 mt-0.5"></p>
                                     </div>
                                 </div>
-                                <!-- Responsável pelo indicador -->
-                                <div class="p-5 flex gap-4">
+                                <div class="p-5 flex gap-4 overflow-visible">
                                     <div class="w-10 h-10 rounded-lg bg-white shadow-sm border border-slate-100 flex items-center justify-center shrink-0">
                                         <i data-lucide="users" class="w-5 h-5 text-indigo-500"></i>
                                     </div>
-                                    <div class="space-y-1">
+                                    <div class="flex-1 overflow-visible">
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Responsável pelo indicador</p>
-                                        <div class="flex items-center gap-2">
-                                            <p id="modal-indicator-responsible" class="text-sm font-black text-slate-900 italic"></p>
-                                            <div class="info-tooltip cursor-help">
-                                                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-400 hover:text-indigo-600 transition-colors"></i>
+                                        <div class="flex items-center justify-between mt-0.5 overflow-visible">
+                                            <p id="modal-indicator-responsible" class="text-xs font-bold text-slate-900"></p>
+                                            <div class="info-tooltip">
+                                                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-400 hover:text-indigo-600 transition-colors cursor-help"></i>
                                                 <span class="tooltiptext">Conforme alinhamento inicial, a responsabilidade pelo acompanhamento do indicador e pela execução de eventuais planos de ação variará segundo o ponto focal de cada núcleo, que se encontra em fase final de definição.</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Frequência -->
                                 <div class="p-5 flex gap-4">
                                     <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
                                         <i data-lucide="calendar" class="w-5 h-5 text-emerald-600"></i>
                                     </div>
-                                    <div class="space-y-1">
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Frequência</p>
-                                        <p id="modal-frequency" class="text-sm font-bold text-slate-700"></p>
+                                    <div>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Periodicidade</p>
+                                        <p id="modal-frequency" class="text-xs font-bold text-slate-700 mt-0.5"></p>
                                     </div>
                                 </div>
-                                <!-- Meta -->
-                                <div class="p-5 flex gap-4 bg-sky-50/30">
-                                    <div class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0">
+                                <div class="p-5 flex gap-4 bg-sky-50/30 overflow-visible">
+                                    <div class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center shrink-0 border border-sky-100">
                                         <i data-lucide="flag" class="w-5 h-5 text-sky-600"></i>
                                     </div>
-                                    <div class="space-y-1">
+                                    <div class="flex-1 overflow-visible">
                                         <p class="text-[10px] font-bold text-sky-500 uppercase tracking-widest">Meta Sugerida</p>
-                                        <div class="flex items-center gap-2">
-                                            <p id="modal-target" class="text-sm font-black text-slate-900 italic"></p>
-                                            <div class="info-tooltip cursor-help">
-                                                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-400 hover:text-sky-600 transition-colors"></i>
+                                        <div class="flex items-center justify-between mt-0.5 overflow-visible">
+                                            <p id="modal-target" class="text-xs font-black text-slate-900 italic">A definir</p>
+                                            <div class="info-tooltip">
+                                                <i data-lucide="info" class="w-3.5 h-3.5 text-slate-400 hover:text-sky-600 transition-colors cursor-help"></i>
                                                 <span class="tooltiptext">As metas definitivas serão estabelecidas após a consolidação dos dados históricos e realização de estudos de benchmarking para cada indicador, garantindo o alinhamento com os objetivos estratégicos da MAG Seguros.</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="h-4 bg-white"></div>
                             </div>
                         </div>
                     </div>
@@ -343,61 +359,55 @@
                         id: "ret-90",
                         name: "Retenção 90 dias",
                         type: "KPI",
-                        description: "Mede o percentual de colaboradores que permanecem na empresa após o período legal de experiência.",
+                        unitLabel: "Percentual (%)",
+                        description: "Percentual de desligamentos (voluntários ou não) dentro do período de experiência legal de 90 dias.",
+                        importance: "É o termômetro crítico da Integração e do Alinhamento Cultural. Uma baixa retenção inicial indica que a promessa feita na contratação não condiz com a realidade, gerando altos custos de re-processamento e prejudicando o clima das equipes receptoras.",
                         currentValue: "98%",
-                        variation: "+3.2%",
                         formula: "(Contratados permanentes > 90 dias / Total Admissões)",
-                        source: "Base Efetivo / LG",
+                        source: "Base de Efetivo (Sistema LG)",
                         responsible: "Remuneração",
                         indicatorResponsible: "A definir",
                         frequency: "Mensal",
-                        target: "A definir",
-                        importance: "É o termômetro crítico da Integração e do Alinhamento Cultural. Uma baixa retenção inicial indica que a promessa feita na contratação não condiz com a realidade, gerando altos custos de re-processamento.",
-                        case: "Identificamos que 15% das saídas ocorriam no 2º mês. Ao reformularmos o projeto focado nos 'Padrinhos', a retenção inicial saltou para 98%.",
-                        notes: "",
+                        case: "Detectamos que 18% das saídas ocorriam no 2º mês por falta de clareza nas metas iniciais. A implementação de feedbacks formais via Power Automate aos 30 e 60 dias elevou a retenção inicial para 98%.",
                         chartType: 'doughnut',
                         chartData: [98, 2],
-                        labels: ['Retidos', 'Rotatividade']
+                        labels: ['Retidos', 'Saídas']
                     },
                     {
                         id: "ret-6m",
                         name: "Retenção 6 meses",
                         type: "KPI",
-                        description: "Avalia a estabilidade e adaptação do novo talento após o primeiro semestre de jornada na companhia.",
+                        unitLabel: "Percentual (%)",
+                        description: "Percentual de novos colaboradores que permanecem na companhia por pelo menos 180 dias.",
+                        importance: "Representa a consolidação do talento e o retorno do investimento inicial. Perder alguém nesta fase significa desperdiçar todo o custo de maturação e treinamento sem ter colhido os frutos da produtividade plena e autonomia do colaborador.",
                         currentValue: "91%",
-                        variation: "+2.1%",
                         formula: "(Ativos com > 6 meses / Total admissões há 6 meses)",
-                        source: "Base Efetivo / LG",
+                        source: "Base de Efetivo (Sistema LG)",
                         responsible: "Remuneração",
                         indicatorResponsible: "A definir",
-                        frequency: "Trimestral",
-                        target: "A definir",
-                        importance: "Representa a consolidação do talento e o retorno do investimento inicial. Perder alguém nesta fase significa desperdiçar todo o custo de maturação e treinamento sem ter colhido os frutos da produtividade plena.",
-                        case: "Em áreas comerciais, ajustamos a régua de metas do primeiro semestre e a retenção saltou 20%.",
-                        notes: "",
+                        frequency: "Mensal (Acumulado)",
+                        case: "Em áreas comerciais, notamos queda de sobrevivência no 4º mês. Ajustamos o plano de ramp-up técnico e a retenção saltou de 72% para 91%.",
                         chartType: 'line',
-                        chartData: [72, 75, 78, 88, 92, 91],
-                        labels: ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6']
+                        chartData: [72, 78, 85, 88, 92, 91],
+                        labels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6']
                     },
                     {
                         id: "qualidade",
                         name: "Qualidade da Contratação",
                         type: "KPI",
-                        description: "Mede a assertividade da seleção através do cruzamento entre desempenho técnico e alinhamento cultural.",
-                        currentValue: "88/100",
-                        variation: "+5.4%",
-                        formula: "(Desempenho Ciclo Gente + Nota de Alinhamento Cultural) / 2",
-                        source: "Pesquisa Gestor / Ciclo de Gente",
-                        responsible: "Gerência de Atração de Talentos",
+                        unitLabel: "Pontuação (pts)",
+                        description: "Score que cruza dados de desempenho atingido e alinhamento cultural do novo colaborador.",
+                        importance: "É o indicador que valida se o RH está entregando ativos de valor para o negócio. Contratações de alta qualidade elevam o patamar de entrega da companhia, reduzem a necessidade de gestão corretiva e aceleram o alcance das metas globais.",
+                        currentValue: "88 pts",
+                        formula: "(Nota Ciclo Gente + Nota Fit Cultural) / 2",
+                        source: "Ciclo de Gente / Pesquisa Fit",
+                        responsible: "Exp. Colaborador / Atração",
                         indicatorResponsible: "A definir",
                         frequency: "Semestral",
-                        target: "A definir",
-                        importance: "É o indicador que valida se o RH está entregando ativos de valor para o negócio. Contratações de alta qualidade elevam o patamar de entrega da companhia.",
-                        case: "Cruzamos dados e vimos que candidatos de 'Indicação Interna' tinham nota de desempenho 30% superior.",
-                        notes: "",
+                        case: "Descobrimos que candidatos vindos de Indicações Internas performam 30% acima da média, o que motivou a reformulação do programa de Indicação.",
                         chartType: 'bar',
-                        chartData: [65, 95],
-                        labels: ['Portais Tradicionais', 'Indicação Interna']
+                        chartData: [65, 88, 95],
+                        labels: ['Mercado', 'MAG Atual', 'Ideal']
                     }
                 ]
             },
@@ -410,61 +420,55 @@
                         id: "reputacao",
                         name: "Índice de Reputação",
                         type: "Indicador",
-                        description: "Consolida a percepção externa da marca empregadora em portais como Glassdoor e Indeed.",
+                        unitLabel: "Pontuação (pts)",
+                        description: "Monitoramento de notas e comentários em portais como Glassdoor e Indeed.",
+                        importance: "A marca empregadora funciona como um multiplicador de eficiência. Uma reputação sólida reduz o custo de aquisição de talentos (CAC) e permite atrair perfis qualificados que priorizam cultura e propósito sobre remuneração.",
                         currentValue: "4.2",
-                        variation: "+0.4",
                         formula: "Média Ponderada (Satisfação Interna + Glassdoor + Indeed)",
                         source: "Monitoramento Social / Glassdoor",
-                        responsible: "Gerência de Atração de Talentos / Marketing",
+                        responsible: "Exp. Colaborador / Marketing",
                         indicatorResponsible: "A definir",
                         frequency: "Trimestral",
-                        target: "A definir",
-                        importance: "A marca empregadora funciona como um multiplicador de eficiência. Uma reputação sólida reduz o custo de aquisição de talentos e atrai perfis qualificados.",
-                        case: "Uma campanha focada na Experiência do Colaborador elevou nossa nota no Glassdoor de 3.8 para 4.2.",
-                        notes: "",
+                        case: "Campanhas focadas em contar histórias reais de nossos colaboradores elevaram nossa nota orgânica para 4.2 em um ano.",
                         chartType: 'line',
-                        chartData: [3.8, 3.85, 3.9, 4.05, 4.15, 4.2],
-                        labels: ['Trim 1', 'Trim 2', 'Trim 3', 'Trim 4', 'Trim 5', 'Trim 6']
+                        chartData: [3.8, 3.9, 4.0, 4.1, 4.15, 4.2],
+                        labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6']
                     },
                     {
                         id: "conv-funil",
                         name: "Conversão por Etapa",
                         type: "Indicador",
-                        description: "Identifica a eficiência operacional do funil de recrutamento e possíveis gargalos burocráticos.",
-                        currentValue: "28%",
-                        variation: "-2.0%",
-                        formula: "(Candidatos Aprovados / Candidatos Inscritos na Etapa)",
-                        source: "Gupy / ATS",
-                        responsible: "Gerência de Atração de Talentos",
+                        unitLabel: "Percentual (%)",
+                        description: "% de candidatos que avançam no funil: Candidatura → Triagem → Entrevista → Oferta → Contratação.",
+                        importance: "Mede a saúde operacional do recrutamento. Gargalos em etapas específicas revelam processos burocráticos ou falta de calibração entre RH e gestores, o que aumenta o risco de perder excelentes candidatos por lentidão.",
+                        currentValue: "4.5%",
+                        formula: "(Contratados / Total Inscritos na Candidatura)",
+                        source: "Gupy",
+                        responsible: "Atração de Talentos",
                         indicatorResponsible: "A definir",
                         frequency: "Mensal",
-                        target: "A definir",
-                        importance: "Mede a saúde operacional do recrutamento. Gargalos em etapas específicas revelam processos lentos ou falta de calibração entre RH e gestores.",
-                        case: "Ao reduzir o processo de 6 para 3 etapas, a taxa de desistência de candidatos caiu 45%.",
-                        notes: "",
+                        case: "Automatizamos o fluxo de aprovação de ofertas e reduzimos o tempo de 15 para 4 dias, diminuindo a desistência de candidatos finalistas.",
                         chartType: 'bar',
-                        chartData: [55, 100],
-                        labels: ['Processo Antigo', 'Processo Atual']
+                        chartData: [1000, 450, 120, 55, 45],
+                        labels: ['Inscritos', 'Triados', 'Entrevista', 'Oferta', 'Contratados']
                     },
                     {
                         id: "cand-vaga",
-                        name: "Candidatos por Vaga",
+                        name: "Candidatos por vaga",
                         type: "Métrica",
-                        description: "Relaciona o volume de inscritos com as vagas disponíveis para medir a competitividade e atratividade.",
+                        unitLabel: "Volume (Qtd)",
+                        description: "Relaciona o volume de inscritos com as vagas disponíveis para medir atratividade.",
+                        importance: "Mede o volume de interesse e a eficácia da estratégia de atração. Um alto índice (>10) exige maior esforço de triagem técnica para focar na 'Concorrência Real', enquanto um baixo índice sinaliza desafios de remuneração ou employer branding. O equilíbrio garante critérios elevados sem sobrecarga operacional.",
                         currentValue: "5.2",
-                        variation: "-3.3",
-                        formula: "Total Candidatos / Vagas Disponíveis",
-                        source: "Gupy (Relatórios)",
-                        responsible: "Gerência de Atração de Talentos",
+                        formula: "Total de Inscritos / Vagas Disponíveis",
+                        source: "Gupy",
+                        responsible: "Atração de Talentos",
                         indicatorResponsible: "A definir",
                         frequency: "Mensal",
-                        target: "A definir",
-                        importance: "Mede o equilíbrio entre atração e assertividade. O ideal de 5 candidatos garante profundidade na análise sem sobrecarga operacional.",
-                        case: "Ao refinar a triagem automática na Gupy, reduzimos o ruído e permitimos que o RH focasse na Concorrência Real.",
-                        notes: "",
+                        case: "Ao refinar a triagem automática na Gupy, reduzimos o volume bruto mas aumentamos a qualidade real dos candidatos.",
                         chartType: 'bar',
-                        chartData: [15, 12, 10, 8, 6, 5.2],
-                        labels: ['Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+                        chartData: [15, 10, 5.2],
+                        labels: ['Ago', 'Out', 'Dez']
                     }
                 ]
             },
@@ -477,67 +481,63 @@
                         id: "time-hire",
                         name: "Tempo de Contratação",
                         type: "Indicador",
-                        description: "Tempo médio gasto desde a abertura oficial da vaga até a aceitação da proposta pelo candidato.",
-                        currentValue: "28d",
-                        variation: "-17d",
+                        unitLabel: "Tempo (Dias)",
+                        description: "Dias corridos desde a abertura oficial da vaga até o aceite formal da proposta.",
+                        importance: "Representa o 'Custo da Cadeira Vazia'. Enquanto uma vaga crítica está aberta, há perda direta de receita, projetos atrasam e a equipe atual sofre sobrecarga de trabalho, o que pode desencadear turnover por excesso de trabalho.",
+                        currentValue: "28 dias",
                         formula: "Data de Aceite - Data de Abertura da Vaga",
-                        source: "Gupy / Fluxo de Aprovações",
-                        responsible: "Gerência de Atração de Talentos",
+                        source: "Gupy / Sistema LG",
+                        responsible: "Atração / Remuneração",
                         indicatorResponsible: "A definir",
                         frequency: "Mensal",
-                        target: "A definir",
-                        importance: "Representa o 'Custo da Cadeira Vazia'. Cada dia com vaga crítica aberta gera perda direta de receita e sobrecarga no time.",
-                        case: "Reduzimos o tempo de 45 para 28 dias automatizando a triagem inicial com inteligência artificial.",
-                        notes: "",
+                        case: "Uso de Inteligência Artificial para triagem inicial reduziu o tempo médio de contratação de 45 para 28 dias.",
                         chartType: 'line',
-                        chartData: [45, 42, 38, 33, 30, 28],
-                        labels: ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6']
+                        chartData: [45, 40, 35, 30, 28, 28],
+                        labels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6']
                     },
                     {
                         id: "diversidade",
                         name: "Taxa de Diversidade",
                         type: "KPI",
-                        description: "Monitora o percentual de contratações de grupos minoritários para apoiar as metas globais de inclusão.",
+                        unitLabel: "Percentual (%)",
+                        description: "% de contratações de grupos minoritários, alinhado aos compromissos ESG.",
+                        importance: "Diversidade é motor de inovação e vantagem competitiva. Equipes plurais tomam decisões melhores, resolvem problemas complexos de forma mais criativa e garantem que os produtos refletam nossa base de clientes.",
                         currentValue: "25%",
-                        variation: "+5.0%",
                         formula: "% Grupos Minoritários (Candidatos vs Contratados)",
-                        source: "Censo Interno / Gupy",
-                        responsible: "Gerência de Atração de Talentos / ESG",
+                        source: "Censo Interno / Base Efetivo",
+                        responsible: "Remuneração / ESG",
                         indicatorResponsible: "A definir",
                         frequency: "Trimestral",
-                        target: "A definir",
-                        importance: "Diversidade é motor de inovação. Equipes plurais tomam decisões melhores e resolvem problemas complexos de forma mais criativa.",
-                        case: "Implementamos a 'Lista de Finalistas Cega' e aumentamos em 25% a contratação de lideranças femininas.",
-                        notes: "",
+                        case: "Adoção de listas de finalistas obrigatórias com diversidade aumentou a contratação de lideranças femininas em 25%.",
                         chartType: 'bar',
-                        chartData: [20, 25],
-                        labels: ['Antes da Lista Cega', 'Após Implementação']
+                        chartData: [15, 25],
+                        labels: ['Ano Anterior', 'Atual']
                     },
                     {
                         id: "ramp-up",
                         name: "Curva de Maturação (Ramp-up)",
-                        type: "KPI",
-                        description: "Tempo necessário para que o novo colaborador atinja 100% da produtividade esperada no cargo.",
-                        currentValue: "120d",
-                        variation: "-60d",
-                        formula: "Dias até atingir 100% da Meta",
-                        source: "Sistemas Gestão / Ciclo Gente",
-                        responsible: "Gerência de Atração de Talentos",
+                        type: "Indicador",
+                        unitLabel: "Tempo (Dias)",
+                        description: "Tempo necessário para atingir 100% da produtividade esperada.",
+                        importance: "Mede o ciclo de maturação do novo colaborador até atingir a performance plena. Essencial para o planejamento de headcount (definir quando contratar para atingir metas futuras) e para calcular o ROI das contratações, identificando o tempo necessário para que o profissional deixe de ser um custo operacional e passe a gerar retorno financeiro.",
+                        currentValue: "120 dias",
+                        formula: "Dias até atingir 100% da Meta operacional",
+                        source: "Sistemas de Performance / Ciclo Gente",
+                        responsible: "Plan. Comercial / Exp. Colaborador",
                         indicatorResponsible: "A definir",
-                        frequency: "Semestral",
-                        target: "A definir",
-                        importance: "Define o retorno real da contratação. Monitorar o tempo até a autonomia plena permite otimizar as trilhas de treinamento inicial.",
-                        case: "Colaboradores com trilha intensiva atingem a meta média 2 meses antes do grupo padrão.",
-                        notes: "",
-                        chartType: 'bar',
-                        chartData: [180, 120],
-                        labels: ['Grupo Padrão', 'Grupo Capacitado']
+                        frequency: "Mensal (Coorte)",
+                        case: "Ao estruturar trilhas intensivas de capacitação técnica, reduzimos o tempo de ramp-up comercial de 180 para 120 dias.",
+                        chartType: 'line',
+                        chartData: [0, 25, 55, 80, 95, 100],
+                        labels: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6']
                     }
                 ]
             }
         ];
 
         let currentChart = null;
+        let currentMetricIndex = 0;
+        const allMetrics = sections.flatMap(s => s.metrics);
 
         function getTypeStyle(type) {
             switch(type) {
@@ -558,27 +558,27 @@
                             <div class="p-2 bg-${section.color}-500 text-white rounded-lg shadow-md">
                                 <i data-lucide="${section.icon}" class="w-6 h-6"></i>
                             </div>
-                            <h3 class="text-2xl font-bold text-slate-800">${section.title}</h3>
-                            <div class="h-px bg-slate-200 flex-1 ml-4"></div>
+                            <h3 class="text-2xl font-bold text-slate-800 tracking-tight font-display">${section.title}</h3>
+                            <div class="h-px bg-slate-200 flex-1 ml-4 opacity-50"></div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             ${section.metrics.map(metric => {
                                 const typeStyle = getTypeStyle(metric.type);
                                 return `
-                                <div onclick="openModal('${metric.id}')" class="metric-card p-8 rounded-2xl cursor-pointer">
+                                <div onclick="openModalById('${metric.id}')" class="metric-card p-8 rounded-[2rem] cursor-pointer">
                                     <div class="flex justify-between items-start mb-6">
-                                        <div class="p-2 bg-${section.color}-50 rounded-lg">
-                                            <i data-lucide="bar-chart-2" class="w-5 h-5 text-${section.color}-600"></i>
+                                        <div class="p-2 bg-slate-50 rounded-lg">
+                                            <i data-lucide="bar-chart-2" class="w-5 h-5 text-slate-400"></i>
                                         </div>
                                         <span class="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded border ${typeStyle}">
                                             ${metric.type}
                                         </span>
                                     </div>
-                                    <h4 class="text-xl font-bold text-slate-900 mb-2 leading-tight">${metric.name}</h4>
+                                    <h4 class="text-xl font-bold text-slate-900 mb-2 leading-tight font-display">${metric.name}</h4>
                                     <p class="text-[13px] text-slate-500 leading-relaxed mb-6 line-clamp-3">${metric.description}</p>
                                     <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-8">${section.title}</p>
                                     <div class="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between text-sky-600 font-bold text-xs uppercase tracking-wider">
-                                        <span>Explorar Detalhes</span>
+                                        <span>Analisar Detalhes</span>
                                         <i data-lucide="arrow-right" class="w-4 h-4"></i>
                                     </div>
                                 </div>
@@ -592,73 +592,100 @@
             lucide.createIcons();
         }
 
-        function openModal(metricId) {
-            const metric = sections.flatMap(s => s.metrics).find(m => m.id === metricId);
-            const section = sections.find(s => s.metrics.some(m => m.id === metricId));
+        function openModalById(metricId) {
+            currentMetricIndex = allMetrics.findIndex(m => m.id === metricId);
+            updateModalContent();
+            
             const modal = document.getElementById('modal');
-            const typeBadge = document.getElementById('modal-type-badge');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('modal-active'), 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function updateModalContent() {
+            const metric = allMetrics[currentMetricIndex];
+            const section = sections.find(s => s.metrics.some(m => m.id === metric.id));
             
             document.getElementById('modal-title').innerText = metric.name;
             document.getElementById('modal-category').innerText = section.title;
             document.getElementById('modal-formula').innerText = metric.formula;
             document.getElementById('modal-source').innerText = metric.source;
-            document.getElementById('modal-responsible').innerText = metric.responsible || "Não definido";
-            document.getElementById('modal-indicator-responsible').innerText = metric.indicatorResponsible || "A definir";
+            document.getElementById('modal-responsible').innerText = metric.responsible;
+            document.getElementById('modal-indicator-responsible').innerText = metric.indicatorResponsible;
             document.getElementById('modal-importance').innerText = metric.importance;
             document.getElementById('modal-case').innerText = metric.case;
-            document.getElementById('modal-notes').innerText = metric.notes || "";
             document.getElementById('modal-frequency').innerText = metric.frequency;
-            document.getElementById('modal-target').innerText = metric.target;
-            
-            const formatValue = document.getElementById('modal-format-value');
-            formatValue.innerText = `${metric.currentValue} (${metric.variation})`;
+            document.getElementById('modal-format-value').innerText = metric.currentValue;
 
+            const unitBadge = document.getElementById('modal-unit-badge');
+            unitBadge.querySelector('span').innerText = metric.unitLabel;
+
+            const typeBadge = document.getElementById('modal-type-badge');
             typeBadge.innerText = metric.type;
             typeBadge.className = `text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${getTypeStyle(metric.type)}`;
 
             const iconContainer = document.getElementById('modal-icon-container');
-            iconContainer.className = `p-3 rounded-xl text-white bg-${section.color}-500 shadow-lg shadow-${section.color}-200`;
+            iconContainer.className = `p-3 rounded-xl text-white shadow-lg bg-${section.color}-500`;
             
-            modal.classList.remove('hidden');
-            setTimeout(() => modal.classList.add('modal-active'), 10);
-            document.body.style.overflow = 'hidden';
             createChart(metric);
             lucide.createIcons();
+        }
+
+        function nextIndicator() {
+            currentMetricIndex = (currentMetricIndex + 1) % allMetrics.length;
+            updateModalContent();
+        }
+
+        function prevIndicator() {
+            currentMetricIndex = (currentMetricIndex - 1 + allMetrics.length) % allMetrics.length;
+            updateModalContent();
         }
 
         function createChart(metric) {
             if (currentChart) currentChart.destroy();
             const ctx = document.getElementById('modalChart').getContext('2d');
             const color = '#38bdf8';
+            const isHorizontal = metric.id === 'conv-funil';
+
             const options = {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { 
-                    legend: { 
-                        display: metric.chartType === 'doughnut' || (metric.chartType === 'bar' && (metric.id === 'qualidade' || metric.id === 'ramp-up' || metric.id === 'cand-vaga')), 
-                        labels: { color: '#94a3b8', font: { size: 10, weight: 'bold' } } 
-                    },
+                indexAxis: isHorizontal ? 'y' : 'x',
+                plugins: {
+                    legend: { display: metric.chartType === 'doughnut', labels: { color: '#94a3b8' } },
                     tooltip: { backgroundColor: '#1e293b' }
-                }
+                },
+                scales: metric.chartType !== 'doughnut' ? {
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, 
+                        ticks: { color: '#64748b' } 
+                    },
+                    x: { 
+                        grid: { display: false }, 
+                        ticks: { color: '#94a3b8', font: { size: 10 } } 
+                    }
+                } : {}
             };
-            if (metric.chartType !== 'doughnut') {
-                options.scales = {
-                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
-                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
-                };
-            }
+
             currentChart = new Chart(ctx, {
-                type: metric.chartType,
+                type: isHorizontal ? 'bar' : metric.chartType,
                 data: {
                     labels: metric.labels,
                     datasets: [{
                         label: 'Referência',
-                        data: (metric.id === 'ret-90') ? [98, 2] : (metric.id === 'ret-6m' ? [72, 75, 78, 88, 92, 91] : [65, 95]),
-                        backgroundColor: metric.chartType === 'doughnut' ? [color, '#1e293b'] : (metric.chartType === 'bar' ? ['#64748b', color] : `${color}33`),
+                        data: metric.chartData,
+                        backgroundColor: (context) => {
+                            if (metric.chartType === 'doughnut') return [color, 'rgba(255,255,255,0.05)'];
+                            if (metric.chartType === 'bar' || isHorizontal) return color;
+                            return 'rgba(56, 189, 248, 0.2)';
+                        },
                         borderColor: color,
-                        borderWidth: 3,
+                        borderWidth: (metric.chartType === 'line') ? 3 : 0,
                         tension: 0.4,
-                        fill: true
+                        fill: true,
+                        borderRadius: (metric.chartType === 'bar') ? 8 : 0,
+                        barThickness: isHorizontal ? 30 : 'flex'
                     }]
                 },
                 options: options
@@ -670,6 +697,20 @@
             modal.classList.remove('modal-active');
             setTimeout(() => modal.classList.add('hidden'), 300);
             document.body.style.overflow = 'auto';
+        }
+
+        window.onkeydown = function(event) {
+            const modal = document.getElementById('modal');
+            if (!modal.classList.contains('hidden')) {
+                if (event.key === "ArrowRight") nextIndicator();
+                if (event.key === "ArrowLeft") prevIndicator();
+                if (event.key === "Escape") closeModal();
+            }
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) closeModal();
         }
 
         window.onload = renderDashboard;
